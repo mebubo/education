@@ -1,5 +1,10 @@
+/* The essential pert here is the reverse() function. Everything else
+ * merely demonstrates that reverse() actually works. 
+ */
+
 #include <stdio.h>
 #define MAXSIZE 100
+#define SIZES 1, 2, 10
 
 typedef struct elem *elem_p;
 
@@ -68,7 +73,7 @@ int main(int argc, char *argv[]) {
    struct elem array[MAXSIZE];
    elem_p head;
    int i;
-   int size[] = {1, 2, 10};
+   int size[] = {SIZES};
 
    /* Create and reverse lists of sizes defined in size[] array */
    for(i=0; i<sizeof(size)/sizeof(int); i++) {

@@ -1,5 +1,4 @@
 #include <stdio.h>
-#define SIZE 20
 
 typedef struct elem *elem_p;
 
@@ -14,23 +13,22 @@ elem_p reverse(elem_p head) {
     * head.
     */
 
-   elem_p new, old, tmp;
+   elem_p old, tmp;
 
-   new = head;
    old = head->next;
-
+   /* The old head should become a tail */
    head->next = NULL;
 
    while(old != NULL) {
 
-      tmp = new;
-      new = old;
-      /* "old" moves along the old list */
+      tmp = head;
+      head = old;
+      /* "old" moves along the old, to-be-reversed part of the list */
       old = old->next;
       /* The reversion itself takes place here */
-      new->next = tmp;
+      head->next = tmp;
    };
-   return new;
+   return head;
 }
 
 void print(elem_p head) {
@@ -46,7 +44,7 @@ void print(elem_p head) {
    printf("\n");
 }
 
-void init(struct elem array[]) {
+void init(struct elem array[], int size) {
    
    /* Initialize an array of struct elem structures so that it forms a
     * singly linked list (the order of the list is the same as that of
@@ -55,31 +53,40 @@ void init(struct elem array[]) {
 
    int i;
 
-   for(i=0; i<SIZE-1; i++) {
+   for(i=0; i<size-1; i++) {
       array->next = array+1;
       array->mark = i;
       array++;
    }
    array->next = NULL;
-   array->mark = SIZE-1;
+   array->mark = size-1;
 }
 
-int main(int argc, char * argv[]) {
+int main(int argc, char *argv[]) {
    
    struct elem array[SIZE];
    elem_p head;
+   int i;
+   int size[] = {1, 2, 10};
 
-   /* Initialise a list */
-   init(array);
-   
-   /* Obtain a pointer to the head of the list */
-   head = (elem_p) array;
-   /* Print the list */
-   print(head);
-   /* Reverse */
-   head = reverse(head);
-   /* See if it was successfull */
-   print(head);
+   /* Create and reverse lists of sizes defined in size[] array */
+   for(i=0; i<sizeof(size)/sizeof(int); i++) {
+
+      /* Initialise a list */
+      init(array, size[i]);
+      
+      /* Obtain a pointer to the head of the list */
+      head = (elem_p) array;
+      /* Print the list */
+      printf("Original list of size %d:\n", size[i]);
+      print(head);
+      /* Reverse */
+      head = reverse(head);
+      /* See if it was successfull */
+      printf("Reversed list:\n");
+      print(head);
+      printf("\n");
+   }
 
    return 0;
 }

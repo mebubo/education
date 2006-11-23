@@ -25,9 +25,9 @@ elem_p reverse(elem_p head) {
 
       tmp = new;
       new = old;
-      /* old moves along the old list */
+      /* "old" moves along the old list */
       old = old->next;
-      /* The reverse itself takes place here */
+      /* The reversion itself takes place here */
       new->next = tmp;
    };
    return new;

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#define MAXSIZE 100
 
 typedef struct elem *elem_p;
 
@@ -64,7 +65,7 @@ void init(struct elem array[], int size) {
 
 int main(int argc, char *argv[]) {
    
-   struct elem array[SIZE];
+   struct elem array[MAXSIZE];
    elem_p head;
    int i;
    int size[] = {1, 2, 10};

@@ -1,0 +1,4 @@
+syntax: glob
+reverse
+*.class
+*.pyc

@@ -1,10 +1,11 @@
-/* The essential pert here is the reverse() function. Everything else
- * merely demonstrates that reverse() actually works. 
+/* The essential part here is the reverse() function. Everything else
+ * is merely to demonstrate that reverse() actually works. 
  */
 
 #include <stdio.h>
-#define MAXSIZE 100
-#define SIZES 1, 2, 10
+
+#define MAXSIZE 20
+#define SIZES -10, 0, 1, 2, 10.5, 1000
 
 typedef struct elem *elem_p;
 
@@ -16,17 +17,21 @@ struct elem {
 elem_p reverse(elem_p head) {
    
    /* Reverse a singly linked list and return a pointer to its new
-    * head.
+    * head. 
     */
 
    elem_p old, tmp;
 
-   old = head->next;
-   /* The old head should become a tail */
-   head->next = NULL;
+   if(head == NULL)
+      /* Treat NULL pointer safely */
+      old = NULL;
+   else {
+      old = head->next;
+      /* The old head should become a tail */
+      head->next = NULL;
+   }
 
    while(old != NULL) {
-
       tmp = head;
       head = old;
       /* "old" moves along the old, to-be-reversed part of the list */
@@ -43,6 +48,9 @@ void print(elem_p head) {
     * elements in order.
     */
 
+   if(head == NULL)
+      printf("(null)");
+
    while(head != NULL){
       printf("%d ", head->mark);
       head = head->next;
@@ -50,7 +58,7 @@ void print(elem_p head) {
    printf("\n");
 }
 
-void init(struct elem array[], int size) {
+void init(struct elem array[], unsigned int size) {
    
    /* Initialize an array of struct elem structures so that it forms a
     * singly linked list (the order of the list is the same as that of
@@ -64,8 +72,9 @@ void init(struct elem array[], int size) {
       array->mark = i;
       array++;
    }
-   array->next = NULL;
-   array->mark = size-1;
+
+      array->next = NULL;
+      array->mark = size-1;
 }
 
 int main(int argc, char *argv[]) {
@@ -74,24 +83,31 @@ int main(int argc, char *argv[]) {
    elem_p head;
    int i;
    int size[] = {SIZES};
+   int size_safe;
 
    /* Create and reverse lists of sizes defined in size[] array */
    for(i=0; i<sizeof(size)/sizeof(int); i++) {
 
-      /* Initialise a list */
-      init(array, size[i]);
-      
-      /* Obtain a pointer to the head of the list */
-      head = (elem_p) array;
+      /* Size shouldn't be larger than MAXSIZE */
+      size_safe = size[i]<MAXSIZE ? size[i] : MAXSIZE;
+      if(size_safe <= 0)
+         /* Zero size should correspond to an empty list (NULL
+          * pointer). Negative sizes do not make much sense either */
+         head = NULL;
+      else {
+         /* Initialise a list */
+         init(array, size_safe);
+         head = array;
+      }
+      printf("\n");
       /* Print the list */
-      printf("Original list of size %d:\n", size[i]);
+      printf("Original list of size %d:\n", size_safe);
       print(head);
       /* Reverse */
       head = reverse(head);
       /* See if it was successfull */
       printf("Reversed list:\n");
       print(head);
-      printf("\n");
    }
 
    return 0;

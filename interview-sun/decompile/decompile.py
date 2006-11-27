@@ -173,7 +173,7 @@ class Decompiler:
                 else:
                     print tab+"%s = %s" % (name, attribute)
             else:
-                print tab+"%s = %s" % (name, "==binary data suppressed==")
+                print tab+"%s = %s" % (name, "### binary data ###")
             
 if __name__ == "__main__":
 

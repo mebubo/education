@@ -8,12 +8,13 @@ import java.io.RandomAccessFile;
 import java.io.IOException;
 import java.io.EOFException;
 
+
 public class Decompile {
 
     static int magic = 0;
     static short minor_version = 0;
     static short major_version = 0;
-    //static long l = 100000000000L;
+    static long longNumber = 100000000000L;
     
     public static void main(String[] args) throws IOException {
 	
@@ -30,4 +31,8 @@ public class Decompile {
 	}
 	System.out.format("%h%n", magic);
     }
+}
+
+class Foo {
+      int foo = 5;
 }

@@ -6,17 +6,17 @@ import java.util.ArrayList;
 
 public class ClassReader extends Reader {
 
-    public final int CONSTANT_Class = 7;
-    public final int CONSTANT_Fieldref = 9;
-    public final int CONSTANT_Methodref = 10;
-    public final int CONSTANT_InterfaceMethodref = 11;
-    public final int CONSTANT_String = 8;
-    public final int CONSTANT_Integer = 3;
-    public final int CONSTANT_Float = 4;
-    public final int CONSTANT_Long = 5;
-    public final int CONSTANT_Double = 6;
-    public final int CONSTANT_NameAndType = 12;
-    public final int CONSTANT_Utf8 = 1;
+    private final int CONSTANT_Class = 7;
+    private final int CONSTANT_Fieldref = 9;
+    private final int CONSTANT_Methodref = 10;
+    private final int CONSTANT_InterfaceMethodref = 11;
+    private final int CONSTANT_String = 8;
+    private final int CONSTANT_Integer = 3;
+    private final int CONSTANT_Float = 4;
+    private final int CONSTANT_Long = 5;
+    private final int CONSTANT_Double = 6;
+    private final int CONSTANT_NameAndType = 12;
+    private final int CONSTANT_Utf8 = 1;
     
     private int magic, minor_version, major_version;
     private int access_flags, this_class, super_class;
@@ -91,9 +91,12 @@ public class ClassReader extends Reader {
         this_class = read2();
         super_class = read2();
         interfaces = readInterfaces();
-        fields = readFields();
-        methods = readFields();
-        attributes = readAttributes();
+        //fields = readFields();
+        fields = readTable("FieldReader");
+        //methods = readFields();
+        methods = readTable("FieldReader");
+        //attributes = readAttributes();
+        attributes = readTable("AttributeReader");
     }
 
     public void printAll() {
@@ -112,6 +115,22 @@ public class ClassReader extends Reader {
 
 	System.out.format("%nAttributes:%n");
         printTable(attributes);
+    }
+
+    public void printNice() {
+        System.out.print(getAccessString(access_flags));
+        System.out.format("%s ", getClassKeyword(this_class));
+        System.out.format("%s ", getClassName(this_class));
+        System.out.format("extends %s", getClassName(super_class));
+        System.out.println(" {");
+
+        System.out.println();
+        printTableNice(fields);
+
+        System.out.println();
+        printTableNice(methods);
+
+        System.out.println("}");
     }
 
 }

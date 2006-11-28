@@ -6,7 +6,7 @@ public class Decompile {
 	
 	ClassReader cr = new ClassReader(args[0]);
 	cr.readAll();
-	cr.printAll();
-
+	//cr.printAll();
+        cr.printNice();
     }
 }

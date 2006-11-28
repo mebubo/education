@@ -13,7 +13,8 @@ public class FieldReader extends Reader {
 	access_flags = read2();
 	name_index = read2();
 	descriptor_index = read2();
-	attributes = readAttributes();
+	//attributes = readAttributes();
+        attributes = readTable("AttributeReader");
     }
 
     public void printAll() {
@@ -22,5 +23,13 @@ public class FieldReader extends Reader {
 	System.out.format("descriptor_index = %s%n", constant_pool.get(descriptor_index-1));
         printTable(attributes);
     }
+
+    public void printNice() {
+        System.out.print(getAccessString(access_flags));
+        System.out.format("%s ", getName(descriptor_index));
+        System.out.format("%s", getName(name_index));
+        System.out.println(";");
+    }
+
 
 }

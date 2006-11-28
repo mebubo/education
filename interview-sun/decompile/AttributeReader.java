@@ -10,14 +10,13 @@ public class AttributeReader extends Reader {
 
     public void readAll() throws IOException {
 	attribute_name_index = read2();
-	attribute_length = read2();
+	attribute_length = read4();
 	info = read(attribute_length);
     }
 
     public void printAll() {
-	System.out.format("access_flags = %d%n", access_flags);
-	System.out.format("name_index = %d%n", name_index);
-	System.out.format("descriptor_index = %d%n", descriptor_index);
+	System.out.format("attribute_name_index = %d%n", attribute_name_index);
+	System.out.format("attribute_length = %d%n", attribute_length);
     }
 
 }

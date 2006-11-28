@@ -15,21 +15,17 @@ public class ClassReader extends Reader {
     }
 
     public void readAll() throws IOException {
-	
 	magic = read4();
 	minor_version = read2();
 	major_version = read2();
 	constant_pool_count = read2();
-
     }
 
     public void printAll() {
-
 	System.out.format("magic = %h%n", magic);
 	System.out.format("minor_version = %d%n", minor_version);
 	System.out.format("major_version = %d%n", major_version);
 	System.out.format("constant_pool_count = %d%n", constant_pool_count);
-
     }
 
 }

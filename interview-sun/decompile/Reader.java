@@ -3,7 +3,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
-public class Reader {
+abstract public class Reader {
 
     private final int ACC_PUBLIC = 0x0001;
     private final int ACC_PRIVATE = 0x0002;
@@ -31,11 +31,11 @@ public class Reader {
 	file = dataStream;
     }
 
-    void readAll() throws IOException {};
+    abstract void readAll() throws IOException;
 
-    void printAll() {};
+    abstract void printAll();
 
-    void printNice() {};
+    abstract void printNice() {};
 
     public byte[] read(int count) throws IOException {
 	byte[] result = new byte[count];

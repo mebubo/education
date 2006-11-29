@@ -79,12 +79,6 @@ abstract public class Reader implements Dummy1, Dummy2 {
         return string;
     }
 
-//     public byte[] readInterfaces() throws IOException {
-//         int interfaces_count = read2();
-//         byte[] interfaces = read(interfaces_count);
-//         return interfaces;
-//     }
-
     public Reader[] readTable(String readerName) throws IOException {
         int count = read2();
         Reader[] items = new Reader[count];
@@ -104,26 +98,6 @@ abstract public class Reader implements Dummy1, Dummy2 {
 	return items;
    
     }
-
-//     public FieldReader[] readFields() throws IOException {
-// 	int fields_count = read2();
-// 	FieldReader[] fields = new FieldReader[fields_count];
-// 	for(int i = 0; i < fields_count; i++) {
-// 	    fields[i] = new FieldReader();
-// 	    fields[i].readAll();
-// 	}
-// 	return fields;
-//     }
-
-//     public AttributeReader[] readAttributes() throws IOException {
-// 	int attributes_count = read2();
-// 	AttributeReader[] attributes = new AttributeReader[attributes_count];
-// 	for(int i = 0; i < attributes_count; i++) {
-// 	    attributes[i] = new AttributeReader();
-// 	    attributes[i].readAll();
-// 	}
-// 	return attributes;
-//     }
 
     public String getClassName(int class_index) {
         int name_index = (Integer)constant_pool.get(class_index-1);

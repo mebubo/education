@@ -4,16 +4,15 @@ import java.io.IOException;
 
 public class FieldReader extends Reader {
 
-    private int access_flags;
-    private int name_index;
-    private int descriptor_index;
-    private Reader[] attributes;
+    protected int access_flags;
+    protected int name_index;
+    protected int descriptor_index;
+    protected Reader[] attributes;
 
     public void readAll() throws IOException {
 	access_flags = read2();
 	name_index = read2();
 	descriptor_index = read2();
-	//attributes = readAttributes();
         attributes = readTable("AttributeReader");
     }
 
@@ -26,8 +25,10 @@ public class FieldReader extends Reader {
 
     public void printNice() {
         System.out.print(getAccessString(access_flags));
-        System.out.format("%s ", getName(descriptor_index));
-        System.out.format("%s", getName(name_index));
+        //System.out.format("%s ", getName(descriptor_index));
+        System.out.format("%s ", getType(descriptor_index));
+        System.out.format("%s ", getName(name_index));
+        System.out.format("%s ", getArgs(descriptor_index));
         System.out.println(";");
     }
 

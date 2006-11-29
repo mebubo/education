@@ -2,8 +2,11 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
-abstract public class Reader {
+abstract public class Reader implements Dummy1, Dummy2 {
 
     private final int ACC_PUBLIC = 0x0001;
     private final int ACC_PRIVATE = 0x0002;
@@ -18,7 +21,8 @@ abstract public class Reader {
     private final int ACC_ABSTRACT = 0x0400;
     private final int ACC_STRICT = 0x0800;
 
-    protected static DataInputStream file;
+    private static DataInputStream file;
+
     protected static List constant_pool;
 
     public Reader() {}
@@ -35,7 +39,7 @@ abstract public class Reader {
 
     abstract void printAll();
 
-    abstract void printNice() {};
+    abstract void printNice();
 
     public byte[] read(int count) throws IOException {
 	byte[] result = new byte[count];
@@ -75,11 +79,11 @@ abstract public class Reader {
         return string;
     }
 
-    public byte[] readInterfaces() throws IOException {
-        int interfaces_count = read2();
-        byte[] interfaces = read(interfaces_count);
-        return interfaces;
-    }
+//     public byte[] readInterfaces() throws IOException {
+//         int interfaces_count = read2();
+//         byte[] interfaces = read(interfaces_count);
+//         return interfaces;
+//     }
 
     public Reader[] readTable(String readerName) throws IOException {
         int count = read2();
@@ -91,7 +95,7 @@ abstract public class Reader {
                 items[i].readAll();
             } 
         } catch (ClassNotFoundException cnf) {
-            System.out.format("Class %s not found%n", readerName);
+            System.err.format("Class %s not found%n", readerName);
             System.exit(1);
         } catch (InstantiationException ie) {
         } catch (IllegalAccessException iae) {
@@ -122,7 +126,9 @@ abstract public class Reader {
 //     }
 
     public String getClassName(int class_index) {
-        return (String)constant_pool.get((Integer)constant_pool.get(class_index-1)-1);
+        int name_index = (Integer)constant_pool.get(class_index-1);
+        String raw_name = getName(name_index);
+        return raw_name.replace("/", ".");
     }
     
     public String getClassKeyword(int access_flags) {
@@ -132,7 +138,73 @@ abstract public class Reader {
     public String getName(int name_index) {
         return (String)constant_pool.get(name_index-1);
     }
+
+    public String getType(int descriptor_index) {
+        String raw_descriptor = getName(descriptor_index);
+        if(raw_descriptor.contains(")"))
+            raw_descriptor = raw_descriptor.split("\\)")[1];
+        Object[] descs = splitDescriptor(raw_descriptor);
+        String result = "";
+        for(int i=0; i<descs.length; i++) {
+            result = result + transformDescriptor((String)descs[i]) + " ";
+        }
+        return result;
+    }
     
+    public String getArgs(int descriptor_index) {
+        String raw_descriptor = getName(descriptor_index);
+        if(raw_descriptor.contains(")")) 
+            raw_descriptor = raw_descriptor.split("\\)")[0];
+        else
+            return "";
+        Object[] descs = splitDescriptor(raw_descriptor);
+        String result = "(";
+        for(int i=0; i<descs.length; i++) {
+            result = result + transformDescriptor((String)descs[i]) + ", ";
+        }
+        return result+")";
+    }
+
+    public Object[] splitDescriptor(String descriptor) {
+            Pattern pattern = Pattern.compile("\\[*(B|C|D|F|I|J|L.*?;|S|Z|V)");
+            Matcher matcher = pattern.matcher(descriptor);
+            List list = new ArrayList();
+            while (matcher.find()) {
+                list.add(matcher.group());
+            }
+            return list.toArray();
+    }
+    
+    public String transformDescriptor(String descriptor) {
+        Pattern pattern = Pattern.compile("\\[|(.+)");
+        Matcher matcher = pattern.matcher(descriptor);
+        String type = "";
+        String dimensions = "";
+        while (matcher.find()) {
+            //            System.out.println("foo " + matcher.group() + " bar " + descriptor);
+            String group = matcher.group();
+            if(group.contains("["))
+                dimensions = dimensions + "[]";
+            else {
+                switch(group.charAt(0)) {
+                case('L'):
+                    type = group.substring(1, group.length()-1).replace("/", ".");
+                    break;
+                case('B'): type = "byte"; break;
+                case('C'): type = "char"; break;
+                case('D'): type = "double"; break;
+                case('F'): type = "float"; break;
+                case('I'): type = "int"; break;
+                case('J'): type = "long"; break;
+                case('S'): type = "short"; break;
+                case('Z'): type = "boolean"; break;
+                case('V'): type = "void"; break;
+                }
+           }
+        }    
+        return type+dimensions;
+    }
+
     public String getAccessString(int access_flags) {
         String string = "";
         if((access_flags & ACC_PUBLIC) != 0) string += "public ";
@@ -160,9 +232,22 @@ abstract public class Reader {
     public void printTableNice(Reader[] table) {
         int length = table.length;
         for(int i = 0; i < length; i++) {
-            System.out.print("\t");
             table[i].printNice();
         }
+    }
+
+    public void printTableNice(Reader[] table, 
+                               String pre, String mid, String post) {
+        int length = table.length;
+        if(length == 0) 
+            return;
+        System.out.print(pre);
+        for(int i = 0; i < length-1; i++) {
+            table[i].printNice();
+            System.out.print(mid);
+        }
+        table[length-1].printNice();
+        System.out.print(post);
     }
 
 }

@@ -19,4 +19,6 @@ public class AttributeReader extends Reader {
 	System.out.format("attribute_length = %d%n", attribute_length);
     }
 
+    public void printNice() {};
+
 }

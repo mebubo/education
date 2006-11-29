@@ -20,8 +20,7 @@ public class ClassReader extends Reader {
     
     private int magic, minor_version, major_version;
     private int access_flags, this_class, super_class;
-    private byte[] interfaces;
-    private Reader[] fields, methods, attributes;
+    private Reader[] interfaces, fields, methods, attributes;
 
     public ClassReader(String fileName) throws IOException {
 	super(fileName);
@@ -90,7 +89,8 @@ public class ClassReader extends Reader {
         access_flags = read2();
         this_class = read2();
         super_class = read2();
-        interfaces = readInterfaces();
+        //interfaces = readInterfaces();
+        interfaces = readTable("InterfaceReader");
         //fields = readFields();
         fields = readTable("FieldReader");
         //methods = readFields();
@@ -107,6 +107,9 @@ public class ClassReader extends Reader {
 	System.out.format("this_class = %d%n", this_class);
 	System.out.format("super_class = %d%n", super_class);
 
+	System.out.format("%nInterfaces:%n");
+        printTable(interfaces);
+
 	System.out.format("%nFields:%n");
         printTable(fields);
 
@@ -118,17 +121,19 @@ public class ClassReader extends Reader {
     }
 
     public void printNice() {
+
         System.out.print(getAccessString(access_flags));
         System.out.format("%s ", getClassKeyword(this_class));
         System.out.format("%s ", getClassName(this_class));
-        System.out.format("extends %s", getClassName(super_class));
-        System.out.println(" {");
+        System.out.format("extends %s ", getClassName(super_class));
+        System.out.format("%s", interfaces.length > 0 ? "implements" : "");
+        printTableNice(interfaces, " ", ", ", " ");
 
-        System.out.println();
-        printTableNice(fields);
+        System.out.println("{");
 
-        System.out.println();
-        printTableNice(methods);
+        printTableNice(fields, "\n\t", "\t", "\n");
+
+        printTableNice(methods, "\t", "\t", "\n");
 
         System.out.println("}");
     }

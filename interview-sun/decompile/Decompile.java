@@ -4,10 +4,11 @@ public class Decompile {
 
     public static void main(String[] args) throws IOException {
 	
-	ClassReader cr = new ClassReader(args[0]);
+        String fileName = args[0];
+	ClassReader cr = new ClassReader(fileName);
 	cr.readAll();
-	cr.printAll();
-        System.out.println();
+	//cr.printAll();
+        System.out.format("\n/* File %s */%n", fileName);
         cr.printNice();
     }
 }

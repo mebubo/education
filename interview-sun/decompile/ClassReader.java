@@ -31,7 +31,7 @@ public class ClassReader extends Reader {
 
     public List readConstantPool() throws IOException {
         int constant_pool_count = read2();
-        List cp = new ArrayList();
+        List<Object> cp = new ArrayList<Object>();
         for(int i = 0; i < constant_pool_count-1; i++) {
             switch(read1()) {
             case CONSTANT_Class :
@@ -40,7 +40,7 @@ public class ClassReader extends Reader {
             case CONSTANT_Fieldref :
             case CONSTANT_Methodref :
             case CONSTANT_InterfaceMethodref : {
-                List c = new ArrayList();
+                List<Object> c = new ArrayList<Object>();
                 c.add(new Integer(read2()));
                 c.add(new Integer(read2()));
                 cp.add(c);
@@ -66,7 +66,7 @@ public class ClassReader extends Reader {
                 i++;
                 break;
             case CONSTANT_NameAndType : {
-                List c = new ArrayList();
+                List<Object> c = new ArrayList<Object>();
                 c.add(new Integer(read2()));
                 c.add(new Integer(read2()));
                 cp.add(c); }
@@ -131,8 +131,10 @@ public class ClassReader extends Reader {
 
         System.out.println("{");
 
-        printTableNice(fields, "\n\t", "\t", "\n");
+        System.out.println("\n\t/* Fields */");
+        printTableNice(fields, "\t", "\t", "");
 
+        System.out.println("\n\t/* Methods */");
         printTableNice(methods, "\t", "\t", "\n");
 
         System.out.println("}");

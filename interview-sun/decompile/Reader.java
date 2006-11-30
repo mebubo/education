@@ -2,13 +2,20 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 abstract public class Reader implements Dummy2 {
 
     /* Fields */
+    
+    /* This object should represent the .class file beeing read */
+    private static DataInputStream file;
+    
+    /* Constant pool is shared by all the subclasses (and also shoud
+     * be filled by one of them prior to use) 
+     */
+    protected static List constant_pool;
+
+    /* Constants defining access flags */
     private final int ACC_PUBLIC = 0x0001;
     private final int ACC_PRIVATE = 0x0002;
     private final int ACC_PROTECTED = 0x0004;
@@ -22,10 +29,6 @@ abstract public class Reader implements Dummy2 {
     private final int ACC_ABSTRACT = 0x0400;
     private final int ACC_STRICT = 0x0800;
 
-    private static DataInputStream file;
-
-    protected static List constant_pool;
-
     /* Constructors */
     public Reader() {}
 
@@ -37,6 +40,9 @@ abstract public class Reader implements Dummy2 {
 	file = dataStream;
     }
 
+    /* Every subclass representing any particular layout of the class
+     * file region should inplement theese methods
+     */
     abstract void readAll() throws IOException;
     abstract void printAll();
     abstract void printNice();
@@ -130,76 +136,6 @@ abstract public class Reader implements Dummy2 {
 
     public String getName(int name_index) {
         return (String)constant_pool.get(name_index-1);
-    }
-
-    public String getType(int descriptor_index) {
-        String raw_descriptor = getName(descriptor_index);
-        if(raw_descriptor.contains(")"))
-            raw_descriptor = raw_descriptor.split("\\)")[1];
-        Object[] descs = splitDescriptor(raw_descriptor);
-        String result = "";
-        for(int i=0; i<descs.length; i++) {
-            result = result + transformDescriptor((String)descs[i]) + " ";
-        }
-        return result;
-    }
-    
-    public String getArgs(int descriptor_index) {
-        String raw_descriptor = getName(descriptor_index);
-        if(raw_descriptor.contains(")")) 
-            raw_descriptor = raw_descriptor.split("\\)")[0];
-        else
-            return "";
-        Object[] descs = splitDescriptor(raw_descriptor);
-        String result = "(";
-        for(int i=0; i<descs.length; i++) {
-            result = result + transformDescriptor((String)descs[i]);
-            if (i < descs.length-1)
-                result += ", ";
-        }
-        return result+")";
-    }
-
-    
-    /* Utility string manipulation methods */
-    public Object[] splitDescriptor(String descriptor) {
-            Pattern pattern = Pattern.compile("\\[*(B|C|D|F|I|J|L.*?;|S|Z|V)");
-            Matcher matcher = pattern.matcher(descriptor);
-            List<Object> list = new ArrayList<Object>();
-            while (matcher.find()) {
-                list.add(matcher.group());
-            }
-            return list.toArray();
-    }
-
-    public String transformDescriptor(String descriptor) {
-        Pattern pattern = Pattern.compile("\\[|(.+)");
-        Matcher matcher = pattern.matcher(descriptor);
-        String type = "";
-        String dimensions = "";
-        while (matcher.find()) {
-            //            System.out.println("foo " + matcher.group() + " bar " + descriptor);
-            String group = matcher.group();
-            if(group.contains("["))
-                dimensions = dimensions + "[]";
-            else {
-                switch(group.charAt(0)) {
-                case('L'):
-                    type = group.substring(1, group.length()-1).replace("/", ".");
-                    break;
-                case('B'): type = "byte"; break;
-                case('C'): type = "char"; break;
-                case('D'): type = "double"; break;
-                case('F'): type = "float"; break;
-                case('I'): type = "int"; break;
-                case('J'): type = "long"; break;
-                case('S'): type = "short"; break;
-                case('Z'): type = "boolean"; break;
-                case('V'): type = "void"; break;
-                }
-           }
-        }    
-        return type+dimensions;
     }
 
     /* Methods to print tables */

@@ -20,8 +20,8 @@ public class FieldReader extends Reader {
 
     public void printAll() {
 	System.out.format("access_flags = %d%n", access_flags);
-	System.out.format("name_index = %s%n", constant_pool.get(name_index-1));
-	System.out.format("descriptor_index = %s%n", constant_pool.get(descriptor_index-1));
+	System.out.format("name_index = %s%n", getName(name_index));
+	System.out.format("descriptor_index = %s%n", getName(descriptor_index));
         printTable(attributes);
     }
 
@@ -34,7 +34,21 @@ public class FieldReader extends Reader {
         System.out.println(";");
     }
 
-    /* Field- (and method-) specific get methods */
+    /*-- Field- (and method-) specific get methods --*/
+    
+    /* ACC_SYNCHRONIZED (for methods) has the same value as ACC_SUPER
+     * (for classes), that's why we need to treat it specially
+     */
+    public String getAccessString(int flags) {
+        final int ACC_SYNCHRONIZED = 0x0020;
+        String string = super.getAccessString(flags);
+        if((flags & ACC_SYNCHRONIZED) != 0) string += "syncronized ";
+        return string;
+    }
+
+    /* Given a descriptor index, return the corresponding type as a
+     * string 
+     */
     public String getType(int descriptor_index) {
         String raw_descriptor = getName(descriptor_index);
         if(raw_descriptor.contains(")"))
@@ -47,6 +61,7 @@ public class FieldReader extends Reader {
         return result;
     }
     
+    /* Given descriptor index, return argument type list as a string */
     public String getArgs(int descriptor_index) {
         String raw_descriptor = getName(descriptor_index);
         if(raw_descriptor.contains(")")) 
@@ -64,7 +79,11 @@ public class FieldReader extends Reader {
     }
 
     
-    /* Utility string manipulation methods */
+    /*-- Utility string manipulation methods --*/
+
+    /* Split a string of descriptors written in a row without spaces
+     * (as it is in the desriptor of argument list) into an array
+     */
     public Object[] splitDescriptor(String descriptor) {
             Pattern pattern = Pattern.compile("\\[*(B|C|D|F|I|J|L.*?;|S|Z|V)");
             Matcher matcher = pattern.matcher(descriptor);
@@ -75,6 +94,9 @@ public class FieldReader extends Reader {
             return list.toArray();
     }
 
+    /* Translate descriptor into standerd java syntax. For example,
+     * [[[D becomes double[][][].
+     */
     public String transformDescriptor(String descriptor) {
         Pattern pattern = Pattern.compile("\\[|(.+)");
         Matcher matcher = pattern.matcher(descriptor);
@@ -104,6 +126,5 @@ public class FieldReader extends Reader {
         }    
         return type+dimensions;
     }
-
 
 }

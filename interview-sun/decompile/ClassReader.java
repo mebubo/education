@@ -1,23 +1,8 @@
 import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
 
 public class ClassReader extends Reader {
 
-    private final int CONSTANT_Class = 7;
-    private final int CONSTANT_Fieldref = 9;
-    private final int CONSTANT_Methodref = 10;
-    private final int CONSTANT_InterfaceMethodref = 11;
-    private final int CONSTANT_String = 8;
-    private final int CONSTANT_Integer = 3;
-    private final int CONSTANT_Float = 4;
-    private final int CONSTANT_Long = 5;
-    private final int CONSTANT_Double = 6;
-    private final int CONSTANT_NameAndType = 12;
-    private final int CONSTANT_Utf8 = 1;
-    
     private int magic, minor_version, major_version;
     private int access_flags, this_class, super_class;
     private Reader[] interfaces, fields, methods, attributes;
@@ -29,63 +14,12 @@ public class ClassReader extends Reader {
 	super(dataStream);
     }
 
-    public List readConstantPool() throws IOException {
-        int constant_pool_count = read2();
-        List<Object> cp = new ArrayList<Object>();
-        for(int i = 0; i < constant_pool_count-1; i++) {
-            switch(read1()) {
-            case CONSTANT_Class :
-                cp.add(new Integer(read2())); 
-                break;
-            case CONSTANT_Fieldref :
-            case CONSTANT_Methodref :
-            case CONSTANT_InterfaceMethodref : {
-                List<Object> c = new ArrayList<Object>();
-                c.add(new Integer(read2()));
-                c.add(new Integer(read2()));
-                cp.add(c);
-                }
-                break;
-            case CONSTANT_String :
-                cp.add(new Integer(read2())); 
-                break;
-            case CONSTANT_Integer :
-                cp.add(new Integer(read4()));
-                break;
-            case CONSTANT_Float :
-                cp.add(new Float(readFloat()));
-                break;
-            case CONSTANT_Long :
-                cp.add(new Long(readLong()));
-                cp.add(null);
-                i++;
-                break;
-            case CONSTANT_Double :
-                cp.add(new Double(readDouble()));
-                cp.add(null);
-                i++;
-                break;
-            case CONSTANT_NameAndType : {
-                List<Object> c = new ArrayList<Object>();
-                c.add(new Integer(read2()));
-                c.add(new Integer(read2()));
-                cp.add(c); }
-                break;
-            case CONSTANT_Utf8 : {
-                cp.add(readString());
-            }
-                break;
-            }
-        }
-        
-        return cp;
-    }
-
     public void readAll() throws IOException {
 	magic = read4();
 	minor_version = read2();
 	major_version = read2();
-	constant_pool = readConstantPool();
+	//constant_pool = readConstantPool();
+	readConstantPool();
         access_flags = read2();
         this_class = read2();
         super_class = read2();

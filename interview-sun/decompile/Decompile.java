@@ -11,9 +11,8 @@ public class Decompile {
 
     public static void main(String[] args) {
 	
-        String usage = "Usage: java Decompile <filename>";
         String fileName;
-        ClassReader cr;
+         ClassReader cr;
 
         try {
             /* Filename should be the first command line argument */

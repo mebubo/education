@@ -6,10 +6,10 @@ import java.util.ArrayList;
 
 public class FieldReader extends Reader {
 
-    protected int access_flags;
-    protected int name_index;
-    protected int descriptor_index;
-    protected Reader[] attributes;
+    private int access_flags;
+    private int name_index;
+    private int descriptor_index;
+    private Reader[] attributes;
 
     public void readAll() throws IOException, ClassFileMagicMismatch {
 	access_flags = read2();
@@ -39,7 +39,7 @@ public class FieldReader extends Reader {
     /* ACC_SYNCHRONIZED (for methods) has the same value as ACC_SUPER
      * (for classes), that's why we need to treat it specially
      */
-    public String getAccessString(int flags) {
+    protected String getAccessString(int flags) {
         final int ACC_SYNCHRONIZED = 0x0020;
         String string = super.getAccessString(flags);
         if((flags & ACC_SYNCHRONIZED) != 0) string += "syncronized ";
@@ -49,7 +49,7 @@ public class FieldReader extends Reader {
     /* Given a descriptor index, return the corresponding type as a
      * string 
      */
-    public String getType(int descriptor_index) {
+    private String getType(int descriptor_index) {
         String raw_descriptor = getName(descriptor_index);
         if(raw_descriptor.contains(")"))
             raw_descriptor = raw_descriptor.split("\\)")[1];
@@ -57,7 +57,7 @@ public class FieldReader extends Reader {
     }
     
     /* Given descriptor index, return argument type list as a string */
-    public String getArgs(int descriptor_index) {
+    private String getArgs(int descriptor_index) {
         String raw_descriptor = getName(descriptor_index);
         if(raw_descriptor.contains(")")) 
             raw_descriptor = raw_descriptor.split("\\)")[0];
@@ -79,7 +79,7 @@ public class FieldReader extends Reader {
     /* Split a string of descriptors written in a row without spaces
      * (as it is in the desriptor of argument list) into an array
      */
-    public Object[] splitDescriptor(String descriptor) {
+    private Object[] splitDescriptor(String descriptor) {
             Pattern pattern = Pattern.compile("\\[*(B|C|D|F|I|J|L.*?;|S|Z|V)");
             Matcher matcher = pattern.matcher(descriptor);
             List<Object> list = new ArrayList<Object>();
@@ -92,7 +92,7 @@ public class FieldReader extends Reader {
     /* Translate descriptor into standerd java syntax. For example,
      * [[[D becomes double[][][].
      */
-    public String transformDescriptor(String descriptor) {
+    private String transformDescriptor(String descriptor) {
         Pattern pattern = Pattern.compile("\\[|(.+)");
         Matcher matcher = pattern.matcher(descriptor);
         String type = "";

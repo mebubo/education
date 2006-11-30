@@ -11,8 +11,7 @@ abstract public class Reader {
     /* This object should represent the .class file beeing read */
     private static DataInputStream file;
     
-    /* Constant pool is shared by all the subclasses (and also shoud
-     * be filled by one of them prior to use) 
+    /* Constant pool is common to all the subclasses
      */
     private static List constant_pool;
 
@@ -44,37 +43,37 @@ abstract public class Reader {
     abstract void printNice();
 
     /*-- Read methods --*/
-    public byte[] read(int count) throws IOException {
+    protected byte[] read(int count) throws IOException {
 	byte[] result = new byte[count];
 	file.readFully(result);
 	return result;
     }
 
-    public int read1() throws IOException {
+    protected int read1() throws IOException {
 	return file.readUnsignedByte();
     }
 
-    public int read2() throws IOException {
+    protected int read2() throws IOException {
 	return file.readUnsignedShort();
     }
 
-    public int read4() throws IOException {
+    protected int read4() throws IOException {
 	return file.readInt();
     }
 
-    public float readFloat() throws IOException {
+    protected float readFloat() throws IOException {
         return file.readFloat();
     }
 
-    public long readLong() throws IOException {
+    protected long readLong() throws IOException {
         return file.readLong();
     }
 
-    public double readDouble() throws IOException {
+    protected double readDouble() throws IOException {
         return file.readDouble();
     }
 
-    public String readString() throws IOException {
+    protected String readString() throws IOException {
         int length = read2();
         byte[] bytes = new byte[length];
         file.read(bytes);
@@ -82,7 +81,7 @@ abstract public class Reader {
         return string;
     }
 
-    public Reader[] readTable(String readerName) throws IOException, ClassFileMagicMismatch {
+    protected Reader[] readTable(String readerName) throws IOException, ClassFileMagicMismatch {
         int count = read2();
         Reader[] items = new Reader[count];
         try {
@@ -95,14 +94,18 @@ abstract public class Reader {
             System.err.format("Class %s not found%n", readerName);
             System.exit(1);
         } catch (InstantiationException ie) {
+            System.err.format("Couldn't instantiate %s%n", readerName);
+            System.exit(1);
         } catch (IllegalAccessException iae) {
+            System.err.format("Class %s not found%n", readerName);
+            System.exit(1);
         }
             
 	return items;
    
     }
 
-    public void readConstantPool() throws IOException {
+    protected void readConstantPool() throws IOException {
         /* Tags for reading constants */
         final int CONSTANT_Class = 7;
         final int CONSTANT_Fieldref = 9;
@@ -167,7 +170,7 @@ abstract public class Reader {
     }
 
     /*-- Get methods --*/
-    public String getAccessString(int flags) {
+    protected String getAccessString(int flags) {
         /* Constants defining access flags */
         final int ACC_PUBLIC = 0x0001;
         final int ACC_PRIVATE = 0x0002;
@@ -197,36 +200,36 @@ abstract public class Reader {
         return string;
     }
     
-    public String getClassName(int class_index) {
+    protected String getClassName(int class_index) {
         int name_index = (Integer)constant_pool.get(class_index-1);
         String raw_name = getName(name_index);
         return raw_name.replace("/", ".");
     }
     
-    public String getClassKeyword(int access_flags) {
+    protected String getClassKeyword(int access_flags) {
         return ((access_flags & ACC_INTERFACE) != 0) ? "interface" : "class";
     }
 
-    public String getName(int name_index) {
+    protected String getName(int name_index) {
         return (String)constant_pool.get(name_index-1);
     }
 
     /*-- Methods to print "tables" --*/
-    public void printTable(Reader[] table) {
+    protected void printTable(Reader[] table) {
         int length = table.length;
         for(int i = 0; i < length; i++) {
             table[i].printAll();
         }
     }
 
-    public void printTableNice(Reader[] table) {
+    protected void printTableNice(Reader[] table) {
         int length = table.length;
         for(int i = 0; i < length; i++) {
             table[i].printNice();
         }
     }
 
-    public void printTableNice(Reader[] table, 
+    protected void printTableNice(Reader[] table, 
                                String pre, String mid, String post) {
         int length = table.length;
         if(length == 0) 
@@ -239,5 +242,5 @@ abstract public class Reader {
         table[length-1].printNice();
         System.out.print(post);
     }
-
+    
 }

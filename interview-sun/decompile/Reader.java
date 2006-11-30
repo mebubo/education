@@ -8,8 +8,6 @@ abstract public class Reader {
 
     /*-- Fields --*/
     
-    private final int ACC_INTERFACE = 0x0200;  
-
     /* This object should represent the .class file beeing read */
     private static DataInputStream file;
     
@@ -18,7 +16,10 @@ abstract public class Reader {
      */
     private static List constant_pool;
 
+    private final int ACC_INTERFACE = 0x0200;  
+
     /*-- Constructors --*/
+
     public Reader() {}
 
     public Reader(String fileName) throws IOException {
@@ -29,10 +30,16 @@ abstract public class Reader {
 	file = dataStream;
     }
 
+    /*-- Methods --*/
+    
+    public void close() throws IOException {
+        file.close();
+    }
+
     /* Every subclass representing any particular layout of the class
      * file region should inplement theese methods
      */
-    abstract void readAll() throws IOException;
+    abstract void readAll() throws IOException, ClassFileMagicMismatch;
     abstract void printAll();
     abstract void printNice();
 
@@ -75,7 +82,7 @@ abstract public class Reader {
         return string;
     }
 
-    public Reader[] readTable(String readerName) throws IOException {
+    public Reader[] readTable(String readerName) throws IOException, ClassFileMagicMismatch {
         int count = read2();
         Reader[] items = new Reader[count];
         try {
@@ -184,7 +191,7 @@ abstract public class Reader {
         if((flags & ACC_VOLATILE) != 0) string += "volatile ";
         if((flags & ACC_TRANSIENT) != 0) string += "transient ";
         if((flags & ACC_NATIVE) != 0) string += "native ";
-        if((flags & ACC_INTERFACE) != 0) string += "interface ";
+        //if((flags & ACC_INTERFACE) != 0) string += "interface ";
         if((flags & ACC_ABSTRACT) != 0) string += "abstract ";
         if((flags & ACC_STRICT) != 0) string += "strict ";
         return string;

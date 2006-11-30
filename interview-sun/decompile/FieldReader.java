@@ -11,7 +11,7 @@ public class FieldReader extends Reader {
     protected int descriptor_index;
     protected Reader[] attributes;
 
-    public void readAll() throws IOException {
+    public void readAll() throws IOException, ClassFileMagicMismatch {
 	access_flags = read2();
 	name_index = read2();
 	descriptor_index = read2();

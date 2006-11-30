@@ -1,8 +1,11 @@
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.lang.Exception;
 
 public class ClassReader extends Reader {
 
+    private int classMagic = 0xcafebabe;
+    
     private int magic, minor_version, major_version;
     private int access_flags, this_class, super_class;
     private Reader[] interfaces, fields, methods, attributes;
@@ -14,8 +17,10 @@ public class ClassReader extends Reader {
 	super(dataStream);
     }
 
-    public void readAll() throws IOException {
+    public void readAll() throws IOException, ClassFileMagicMismatch {
 	magic = read4();
+        if(magic != classMagic) 
+            throw new ClassFileMagicMismatch();
 	minor_version = read2();
 	major_version = read2();
 	//constant_pool = readConstantPool();
@@ -53,7 +58,7 @@ public class ClassReader extends Reader {
     public void printNice() {
 
         System.out.print(getAccessString(access_flags));
-        System.out.format("%s ", getClassKeyword(this_class));
+        System.out.format("%s ", getClassKeyword(access_flags));
         System.out.format("%s ", getClassName(this_class));
         System.out.format("extends %s ", getClassName(super_class));
         System.out.format("%s", interfaces.length > 0 ? "implements" : "");

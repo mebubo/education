@@ -53,12 +53,7 @@ public class FieldReader extends Reader {
         String raw_descriptor = getName(descriptor_index);
         if(raw_descriptor.contains(")"))
             raw_descriptor = raw_descriptor.split("\\)")[1];
-        Object[] descs = splitDescriptor(raw_descriptor);
-        String result = "";
-        for(int i=0; i<descs.length; i++) {
-            result = result + transformDescriptor((String)descs[i]) + " ";
-        }
-        return result;
+        return transformDescriptor(raw_descriptor) + " ";
     }
     
     /* Given descriptor index, return argument type list as a string */

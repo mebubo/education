@@ -89,13 +89,9 @@ public class ClassReader extends Reader {
         access_flags = read2();
         this_class = read2();
         super_class = read2();
-        //interfaces = readInterfaces();
         interfaces = readTable("InterfaceReader");
-        //fields = readFields();
         fields = readTable("FieldReader");
-        //methods = readFields();
         methods = readTable("FieldReader");
-        //attributes = readAttributes();
         attributes = readTable("AttributeReader");
     }
 

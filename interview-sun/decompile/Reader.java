@@ -8,14 +8,7 @@ import java.util.regex.Matcher;
 
 abstract public class Reader implements Dummy2 {
 
-    public static Reader[][][][][][][] dummy (Reader[][][][][][][] reader, int[][][] i, char[] c) {
-        return reader;
-    }
-
-    public List[][][][][][][] dummy (List[][][][][][][] reader) {
-        return reader;
-    }
-
+    /* Fields */
     private final int ACC_PUBLIC = 0x0001;
     private final int ACC_PRIVATE = 0x0002;
     private final int ACC_PROTECTED = 0x0004;
@@ -33,6 +26,7 @@ abstract public class Reader implements Dummy2 {
 
     protected static List constant_pool;
 
+    /* Constructors */
     public Reader() {}
 
     public Reader(String fileName) throws IOException {
@@ -44,17 +38,16 @@ abstract public class Reader implements Dummy2 {
     }
 
     abstract void readAll() throws IOException;
-
     abstract void printAll();
-
     abstract void printNice();
 
+    /* Read methods */
     public byte[] read(int count) throws IOException {
 	byte[] result = new byte[count];
 	file.readFully(result);
 	return result;
     }
-	
+
     public int read1() throws IOException {
 	return file.readUnsignedByte();
     }
@@ -107,6 +100,24 @@ abstract public class Reader implements Dummy2 {
    
     }
 
+    /* Get methods */
+    public String getAccessString(int flags) {
+        String string = "";
+        if((flags & ACC_PUBLIC) != 0) string += "public ";
+        if((flags & ACC_PRIVATE) != 0) string += "private ";
+        if((flags & ACC_PROTECTED) != 0) string += "protected ";
+        if((flags & ACC_STATIC) != 0) string += "static ";
+        if((flags & ACC_FINAL) != 0) string += "final ";
+        //if((flags & ACC_SYNCHRONIZED) != 0) string += "syncronized ";
+        if((flags & ACC_VOLATILE) != 0) string += "volatile ";
+        if((flags & ACC_TRANSIENT) != 0) string += "transient ";
+        if((flags & ACC_NATIVE) != 0) string += "native ";
+        if((flags & ACC_INTERFACE) != 0) string += "interface ";
+        if((flags & ACC_ABSTRACT) != 0) string += "abstract ";
+        if((flags & ACC_STRICT) != 0) string += "strict ";
+        return string;
+    }
+    
     public String getClassName(int class_index) {
         int name_index = (Integer)constant_pool.get(class_index-1);
         String raw_name = getName(name_index);
@@ -149,6 +160,8 @@ abstract public class Reader implements Dummy2 {
         return result+")";
     }
 
+    
+    /* Utility string manipulation methods */
     public Object[] splitDescriptor(String descriptor) {
             Pattern pattern = Pattern.compile("\\[*(B|C|D|F|I|J|L.*?;|S|Z|V)");
             Matcher matcher = pattern.matcher(descriptor);
@@ -158,7 +171,7 @@ abstract public class Reader implements Dummy2 {
             }
             return list.toArray();
     }
-    
+
     public String transformDescriptor(String descriptor) {
         Pattern pattern = Pattern.compile("\\[|(.+)");
         Matcher matcher = pattern.matcher(descriptor);
@@ -189,23 +202,7 @@ abstract public class Reader implements Dummy2 {
         return type+dimensions;
     }
 
-    public String getAccessString(int flags) {
-        String string = "";
-        if((flags & ACC_PUBLIC) != 0) string += "public ";
-        if((flags & ACC_PRIVATE) != 0) string += "private ";
-        if((flags & ACC_PROTECTED) != 0) string += "protected ";
-        if((flags & ACC_STATIC) != 0) string += "static ";
-        if((flags & ACC_FINAL) != 0) string += "final ";
-        //if((flags & ACC_SYNCHRONIZED) != 0) string += "syncronized ";
-        if((flags & ACC_VOLATILE) != 0) string += "volatile ";
-        if((flags & ACC_TRANSIENT) != 0) string += "transient ";
-        if((flags & ACC_NATIVE) != 0) string += "native ";
-        if((flags & ACC_INTERFACE) != 0) string += "interface ";
-        if((flags & ACC_ABSTRACT) != 0) string += "abstract ";
-        if((flags & ACC_STRICT) != 0) string += "strict ";
-        return string;
-    }
-    
+    /* Methods to print tables */
     public void printTable(Reader[] table) {
         int length = table.length;
         for(int i = 0; i < length; i++) {

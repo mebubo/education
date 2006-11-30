@@ -1,0 +1,1 @@
+class ClassFileMagicMismatch extends Exception {}

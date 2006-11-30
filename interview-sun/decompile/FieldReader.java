@@ -89,7 +89,7 @@ public class FieldReader extends Reader {
             return list.toArray();
     }
 
-    /* Translate descriptor into standerd java syntax. For example,
+    /* Translate descriptor into standard java syntax. For example,
      * [[[D becomes double[][][].
      */
     private String transformDescriptor(String descriptor) {
@@ -98,7 +98,6 @@ public class FieldReader extends Reader {
         String type = "";
         String dimensions = "";
         while (matcher.find()) {
-            //            System.out.println("foo " + matcher.group() + " bar " + descriptor);
             String group = matcher.group();
             if(group.contains("["))
                 dimensions = dimensions + "[]";

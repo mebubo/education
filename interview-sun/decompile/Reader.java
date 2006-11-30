@@ -11,11 +11,10 @@ abstract public class Reader {
     /* This object should represent the .class file beeing read */
     private static DataInputStream file;
     
-    /* Constant pool is common to all the subclasses
+    /* Constant pool is common to all the subclasses, and there should
+     * be only one 
      */
     private static List constant_pool;
-
-    private final int ACC_INTERFACE = 0x0200;  
 
     /*-- Constructors --*/
 
@@ -207,6 +206,7 @@ abstract public class Reader {
     }
     
     protected String getClassKeyword(int access_flags) {
+        final int ACC_INTERFACE = 0x0200;  
         return ((access_flags & ACC_INTERFACE) != 0) ? "interface" : "class";
     }
 

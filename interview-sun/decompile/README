@@ -11,7 +11,7 @@ info).
 Currently it outputs class name, access flags, superclass name, names
 of the implemented interfaces, names of the fields of the class with
 access flags, signatures of the methods (no exception info is
-available yet). All in the form close to the standerd java syntax.
+available yet). All in the form close to the standard java syntax.
 
 To compile, issue
 

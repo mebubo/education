@@ -42,21 +42,22 @@ abstract public class Reader {
     abstract void printNice();
 
     /*-- Read methods --*/
+
     protected byte[] read(int count) throws IOException {
 	byte[] result = new byte[count];
 	file.readFully(result);
 	return result;
     }
 
-    protected int read1() throws IOException {
+    protected int readByte() throws IOException {
 	return file.readUnsignedByte();
     }
 
-    protected int read2() throws IOException {
+    protected int readShort() throws IOException {
 	return file.readUnsignedShort();
     }
 
-    protected int read4() throws IOException {
+    protected int readInt() throws IOException {
 	return file.readInt();
     }
 
@@ -73,7 +74,7 @@ abstract public class Reader {
     }
 
     protected String readString() throws IOException {
-        int length = read2();
+        int length = readShort();
         byte[] bytes = new byte[length];
         file.read(bytes);
         String string = new String(bytes);
@@ -81,7 +82,7 @@ abstract public class Reader {
     }
 
     protected Reader[] readTable(String readerName) throws IOException, ClassFileMagicMismatch {
-        int count = read2();
+        int count = readShort();
         Reader[] items = new Reader[count];
         try {
             Class classObj = Class.forName(readerName);
@@ -118,27 +119,27 @@ abstract public class Reader {
         final int CONSTANT_NameAndType = 12;
         final int CONSTANT_Utf8 = 1;
 
-        int constant_pool_count = read2();
+        int constant_pool_count = readShort();
         List<Object> cp = new ArrayList<Object>();
         for(int i = 0; i < constant_pool_count-1; i++) {
-            switch(read1()) {
+            switch(readByte()) {
             case CONSTANT_Class :
-                cp.add(new Integer(read2())); 
+                cp.add(new Integer(readShort())); 
                 break;
             case CONSTANT_Fieldref :
             case CONSTANT_Methodref :
             case CONSTANT_InterfaceMethodref : {
                 List<Object> c = new ArrayList<Object>();
-                c.add(new Integer(read2()));
-                c.add(new Integer(read2()));
+                c.add(new Integer(readShort()));
+                c.add(new Integer(readShort()));
                 cp.add(c);
                 }
                 break;
             case CONSTANT_String :
-                cp.add(new Integer(read2())); 
+                cp.add(new Integer(readShort())); 
                 break;
             case CONSTANT_Integer :
-                cp.add(new Integer(read4()));
+                cp.add(new Integer(readInt()));
                 break;
             case CONSTANT_Float :
                 cp.add(new Float(readFloat()));
@@ -155,8 +156,8 @@ abstract public class Reader {
                 break;
             case CONSTANT_NameAndType : {
                 List<Object> c = new ArrayList<Object>();
-                c.add(new Integer(read2()));
-                c.add(new Integer(read2()));
+                c.add(new Integer(readShort()));
+                c.add(new Integer(readShort()));
                 cp.add(c); }
                 break;
             case CONSTANT_Utf8 : {

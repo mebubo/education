@@ -5,7 +5,7 @@ public class InterfaceReader extends Reader {
     private int name_index;
 
     public void readAll() throws IOException {
-	name_index = read2();
+	name_index = readShort();
     }
 
     public void printAll() {

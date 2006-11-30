@@ -4,7 +4,7 @@ import java.lang.Exception;
 
 public class ClassReader extends Reader {
 
-    private int classMagic = 0xcafebabe;
+    private final int classMagic = 0xcafebabe;
     
     private int magic, minor_version, major_version;
     private int access_flags, this_class, super_class;
@@ -18,16 +18,16 @@ public class ClassReader extends Reader {
     }
 
     public void readAll() throws IOException, ClassFileMagicMismatch {
-	magic = read4();
+	magic = readInt();
         if(magic != classMagic) 
             throw new ClassFileMagicMismatch();
-	minor_version = read2();
-	major_version = read2();
+	minor_version = readShort();
+	major_version = readShort();
 	//constant_pool = readConstantPool();
 	readConstantPool();
-        access_flags = read2();
-        this_class = read2();
-        super_class = read2();
+        access_flags = readShort();
+        this_class = readShort();
+        super_class = readShort();
         interfaces = readTable("InterfaceReader");
         fields = readTable("FieldReader");
         methods = readTable("FieldReader");

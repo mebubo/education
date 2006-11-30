@@ -12,9 +12,9 @@ public class FieldReader extends Reader {
     private Reader[] attributes;
 
     public void readAll() throws IOException, ClassFileMagicMismatch {
-	access_flags = read2();
-	name_index = read2();
-	descriptor_index = read2();
+	access_flags = readShort();
+	name_index = readShort();
+	descriptor_index = readShort();
         attributes = readTable("AttributeReader");
     }
 

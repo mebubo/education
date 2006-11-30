@@ -7,8 +7,8 @@ public class AttributeReader extends Reader {
     private byte info[];
 
     public void readAll() throws IOException {
-	attribute_name_index = read2();
-	attribute_length = read4();
+	attribute_name_index = readShort();
+	attribute_length = readInt();
 	info = read(attribute_length);
     }
 

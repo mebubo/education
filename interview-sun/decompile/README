@@ -1,0 +1,22 @@
+The main purpose of AttributeReader, ClassReader, FieldReader,
+InterfaceReader, which inherit from the abstract class Reader, is to
+implement methods readAll() and printAll(), specific to the layout of
+the corresponding parts of the class file.
+
+Decompile class has the main() method, which implements a small
+program to print the contents of the .class file (it instanciates
+ClassReader and uses its methods to read the class file and print the
+info). 
+
+Currently it outputs class name, access flags, superclass name, names
+of the implemented interfaces, names of the fields of the class with
+access flags, signatures of the methods (no exception info is
+available yet). All in the form close to the standerd java syntax.
+
+To compile, issue
+
+   $ make
+
+The program can be run in the following way:
+
+   $ java Decompile <class file>

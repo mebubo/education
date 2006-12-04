@@ -6,10 +6,6 @@ import java.util.ArrayList;
 
 abstract public class Reader {
 
-    class Foo {}
-    
-    interface Bar{}
-
     /*-- Fields --*/
     
     /* This object should represent the .class file beeing read */
@@ -84,10 +80,10 @@ abstract public class Reader {
     /* The so called tables are used in several class file
      * structures. Tables consist of zero or more variable-sized
      * items, each item having the same layout. The idea is to read
-     * each table into the array of instances of some Reader subclass.
+     * each table into an array of instances of some Reader subclass.
      * More precisely, Reader subclass whose readAll() method is
      * implemented in such a way as to read one item of that
-     * particular table. 
+     * particular table.
      *
      * We presume that whenever someone implementing the readAll()
      * method (in some subclass of the Reader) encounters the table he

@@ -19,13 +19,18 @@ public class FieldReader extends Reader {
     }
 
     public void printNice() {
-        System.out.print(getAccessString(access_flags));
+        String access = getAccessString(access_flags);
+        System.out.print(access);
         //System.out.format("%s ", getName(descriptor_index));
         System.out.print(getType(descriptor_index));
         System.out.print(getName(name_index));
-        System.out.print(getArgs(descriptor_index));
+        String args = getArgs(descriptor_index);
+        System.out.print(args);
         printTableNice(attributes);
-        System.out.println(";");
+        if(access.contains("abstract") || args.length()==0)
+            System.out.println(";");
+        else
+            System.out.println(" {/* Body omitted */}");
     }
 
     /*-- Field- (and method-) specific get methods --*/

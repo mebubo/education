@@ -19,7 +19,7 @@ public class InnerClassesAttributeReader extends Reader {
         System.out.format("%s ", getClassKeyword(inner_class_access_flags));
         //System.out.format("%s ", getClassName(inner_class_info_index));
         System.out.print(getName(inner_name_index));
-        System.out.println(" {}");
+        System.out.println(" {/* Body omitted */}");
         
     }
 }

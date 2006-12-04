@@ -1,7 +1,7 @@
 
 * place the Reader library into a separate package
 * process and output ConstantValue attributes
-* output the info about outer classes (when reading .class file of the
-   inner class)
+* Correctly handle the .class files of the inner classes (Foo$Bar.class)
 * read and output the structure of the inner classes (not only the access
    flags and the name)
+* more generous error handling

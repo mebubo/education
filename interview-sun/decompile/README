@@ -1,10 +1,18 @@
+Contents
+========
+
 This directory contains the library (*Reader.java files) for parsing
 compiled Java .class files and an example program (Decompile.java)
-which makes use of the library, as well as this 
+which makes use of the library, as well as Makefile, this README file
+and TODO list.
 
-The big picture.
+The big picture
+===============
 
 
+
+Details
+=======
 
 The main purpose of AttributeReader, ClassReader, FieldReader,
 InterfaceReader, which inherit from the abstract class Reader, is to
@@ -19,7 +27,10 @@ info).
 Currently it outputs class name, access flags, superclass name, names
 of the implemented interfaces, names of the fields of the class with
 access flags, signatures of the methods (no exception info is
-available yet). All in the form close to the standard java syntax.
+available yet). All in the form close to the standard Java syntax.
+
+Usage
+=====
 
 To compile, issue
 

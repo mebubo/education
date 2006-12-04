@@ -5,8 +5,14 @@ import java.io.EOFException;
 public class Decompile {
 
     private static void errorMessage(String message) {
-        System.err.println(message);
+        System.err.println("\n\nE: " + message);
         System.exit(1);
+    }
+
+    private static void bug() {
+        errorMessage("You've probably found the bug in the classreader library!\n" +
+                     "Please send the message with a detailed description\n" +
+                     "of how this behavior can be reproduced to dolgovs@gmail.com");
     }
 
     public static void main(String[] args) {
@@ -31,6 +37,8 @@ public class Decompile {
                 errorMessage("File not found!");
             } catch(EOFException ex) {
                 errorMessage("Class file format seems to be invalid!");
+            } catch(NullPointerException ex) {
+                bug();
             } finally {
                 /* we no longer need the file object in classReader */
                 if(classReader != null)
@@ -41,6 +49,10 @@ public class Decompile {
         }
         /* Here goes the printing */
         System.out.format("\n/* File %s */%n", fileName);
-        classReader.printNice();
+        try {
+            classReader.printNice();
+        } catch(NullPointerException ex) {
+            bug();
+        }
     }
 }

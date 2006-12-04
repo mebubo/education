@@ -18,13 +18,6 @@ public class FieldReader extends Reader {
         attributes = readTable("AttributeReader");
     }
 
-    public void printAll() {
-	System.out.format("access_flags = %d%n", access_flags);
-	System.out.format("name_index = %s%n", getName(name_index));
-	System.out.format("descriptor_index = %s%n", getName(descriptor_index));
-        printTable(attributes);
-    }
-
     public void printNice() {
         System.out.print(getAccessString(access_flags));
         //System.out.format("%s ", getName(descriptor_index));

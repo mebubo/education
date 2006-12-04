@@ -8,8 +8,6 @@ public class ExceptionsAttributeReader extends Reader {
         exception_index = readShort();
     }
 
-    public void printAll() {}
-
     public void printNice() {
         System.out.print(getClassName(exception_index));
     }

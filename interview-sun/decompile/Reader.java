@@ -42,7 +42,6 @@ abstract public class Reader {
      * file region should inplement theese methods
      */
     abstract void readAll() throws IOException, ClassFileMagicMismatch;
-    abstract void printAll();
     abstract void printNice();
 
     /*-- Read methods --*/
@@ -220,12 +219,6 @@ abstract public class Reader {
     }
 
     /*-- Methods to print "tables" --*/
-    protected static void printTable(Reader[] table) {
-        int length = table.length;
-        for(int i = 0; i < length; i++) {
-            table[i].printAll();
-        }
-    }
 
     protected static void printTableNice(Reader[] table) {
         int length = table.length;

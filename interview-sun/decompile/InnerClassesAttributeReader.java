@@ -14,11 +14,6 @@ public class InnerClassesAttributeReader extends Reader {
         inner_class_access_flags = readShort();
     }
 
-    public void printAll() {
-	System.out.format("attribute_name_index = %d%n", inner_class_info_index);
-	System.out.format("attribute_length = %d%n", inner_name_index);
-    }
-
     public void printNice() {
         System.out.print(getAccessString(inner_class_access_flags));
         System.out.format("%s ", getClassKeyword(inner_class_access_flags));

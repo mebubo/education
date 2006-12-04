@@ -8,10 +8,6 @@ public class InterfaceReader extends Reader {
 	name_index = readShort();
     }
 
-    public void printAll() {
-	System.out.format("name_index = %d ( %s )%n", name_index, getClassName(name_index));
-    }
-
     public void printNice() {
         System.out.format("%s", getClassName(name_index));
     }

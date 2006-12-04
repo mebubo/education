@@ -22,11 +22,6 @@ public class AttributeReader extends Reader {
             info = read(attribute_length);
     }
 
-    public void printAll() {
-	System.out.format("attribute_name_index = %d%n", attribute_name_index);
-	System.out.format("attribute_length = %d%n", attribute_length);
-    }
-
     public void printNice() {
         if(attribute_name.equals(INNER_CLASSES) && attribute != null) {
             printTableNice(attribute, "\t", "\t", "\n");

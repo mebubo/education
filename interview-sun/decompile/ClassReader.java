@@ -34,27 +34,6 @@ public class ClassReader extends Reader {
         attributes = readTable("AttributeReader");
     }
 
-    public void printAll() {
-	System.out.format("magic = %h%n", magic);
-	System.out.format("minor_version = %d%n", minor_version);
-	System.out.format("major_version = %d%n", major_version);
-	System.out.format("access_flags = %d%n", access_flags);
-	System.out.format("this_class = %d%n", this_class);
-	System.out.format("super_class = %d%n", super_class);
-
-	System.out.format("%nInterfaces:%n");
-        printTable(interfaces);
-
-	System.out.format("%nFields:%n");
-        printTable(fields);
-
-	System.out.format("%nMethods:%n");
-        printTable(methods);
-
-	System.out.format("%nAttributes:%n");
-        printTable(attributes);
-    }
-
     public void printNice() {
 
         System.out.print(getAccessString(access_flags));

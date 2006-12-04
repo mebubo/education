@@ -13,9 +13,6 @@ public class ClassReader extends Reader {
     public ClassReader(String fileName) throws IOException {
 	super(fileName);
     }
-    public ClassReader(DataInputStream dataStream) {
-	super(dataStream);
-    }
 
     public void readAll() throws IOException, ClassFileMagicMismatch {
 	magic = readInt();

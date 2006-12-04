@@ -28,10 +28,6 @@ abstract public class Reader {
 	file = new DataInputStream(new FileInputStream(fileName));
     }
 
-    public Reader(DataInputStream dataStream) {
-	file = dataStream;
-    }
-
     /*-- Methods --*/
     
     public void close() throws IOException {

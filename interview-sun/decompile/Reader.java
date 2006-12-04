@@ -39,52 +39,38 @@ abstract public class Reader {
     }
 
     /* Every subclass representing any particular layout of the class
-     * file region should inplement theese methods
+     * file region should inplement these methods
      */
     abstract void readAll() throws IOException, ClassFileMagicMismatch;
     abstract void printNice();
 
     /*-- Read methods --*/
 
+    /* Read count bytes into the byte[] array, and return it */
     protected static byte[] read(int count) throws IOException {
 	byte[] result = new byte[count];
 	file.readFully(result);
 	return result;
     }
 
+    /* Wrapper for DataInputStream.readUnsignedByte() */
     protected static int readByte() throws IOException {
 	return file.readUnsignedByte();
     }
 
+    /* Wrapper for DataInputStream.readUnsignedShort() */
     protected static int readShort() throws IOException {
 	return file.readUnsignedShort();
     }
 
+    /* Wrapper for DataInputStream.readInt() */
     protected static int readInt() throws IOException {
 	return file.readInt();
     }
 
-    protected static float readFloat() throws IOException {
-        return file.readFloat();
-    }
-
-    protected static long readLong() throws IOException {
-        return file.readLong();
-    }
-
-    protected static double readDouble() throws IOException {
-        return file.readDouble();
-    }
-
-    protected static String readString() throws IOException {
-        int length = readShort();
-        byte[] bytes = new byte[length];
-        file.read(bytes);
-        String string = new String(bytes);
-        return string;
-    }
-
-    protected static Reader[] readTable(String readerName) throws IOException, ClassFileMagicMismatch {
+    /* The so called tables are used in several class file structures */
+    protected static Reader[] readTable(String readerName) throws IOException, 
+                                                                  ClassFileMagicMismatch {
         int count = readShort();
         Reader[] items = new Reader[count];
         try {
@@ -108,10 +94,13 @@ abstract public class Reader {
    
     }
 
-    /* Constant pool is a very special entity, and doesn't fit into
-     * the Reader model very well. That's why it was decided that the
-     * task of reading it is best accomplished by this method, rather
-     * then subclassing Reader to get some kind of ConstantPoolReader.
+    /* Constant pool is a very special entity (in that it is required
+     * for the get* methods in Reader to work, and also has an unusual
+     * tag-driven layout, which no other part of the .class file has),
+     * and doesn't fit into the Reader model very well. That's why it
+     * was decided that the task of reading it is best accomplished by
+     * this method, rather then subclassing Reader to get some kind of
+     * ConstantPoolReader.
      */
     protected static void readConstantPool() throws IOException {
         /* Tags for reading constants */
@@ -177,6 +166,29 @@ abstract public class Reader {
         constant_pool = cp;
     }
 
+    /* The following 4 read* methods are used in readConstantPool()
+     * only, and are thus made private 
+     */
+    private static float readFloat() throws IOException {
+        return file.readFloat();
+    }
+
+    private static long readLong() throws IOException {
+        return file.readLong();
+    }
+
+    private static double readDouble() throws IOException {
+        return file.readDouble();
+    }
+
+    private static String readString() throws IOException {
+        int length = readShort();
+        byte[] bytes = new byte[length];
+        file.read(bytes);
+        String string = new String(bytes);
+        return string;
+    }
+
     /*-- Get methods --*/
 
     /* Compose an access string based on the value of flags */
@@ -236,6 +248,9 @@ abstract public class Reader {
 
     /*-- Methods to print "tables" --*/
 
+    /* For each entry in a Reader[] array, call its printNice method
+     * (the handling of the NullPointerException is left to the user)
+     */
     protected static void printTableNice(Reader[] table) {
         int length = table.length;
         for(int i = 0; i < length; i++) {
@@ -243,6 +258,7 @@ abstract public class Reader {
         }
     }
 
+    /* First print pre, then each Reader[] array entry*/
     protected static void printTableNice(Reader[] table, 
                                          String pre, String mid, String post) {
         int length = table.length;

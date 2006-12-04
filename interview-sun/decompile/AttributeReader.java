@@ -28,10 +28,10 @@ public class AttributeReader extends Reader {
     }
 
     public void printNice() {
-        if(attribute_name.equals(INNER_CLASSES)) {
+        if(attribute_name.equals(INNER_CLASSES) && attribute != null) {
             printTableNice(attribute, "\t", "\t", "\n");
         }
-        if(attribute_name.equals(EXCEPTIONS)) {
+        if(attribute_name.equals(EXCEPTIONS) && attribute != null) {
             printTableNice(attribute, " throws ", ", ", "");
         }
     }

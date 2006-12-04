@@ -29,16 +29,33 @@ abstract public class Reader {
     }
 
     /*-- Methods --*/
+
+    /* Every subclass representing any particular layout of the class
+     * file region should inplement readAll() and printNice().
+     */
+
+    /* readAll() should be capable of reading a particular region of
+     * the class file, i.e. the whole class file or a single entry in
+     * some of the nested "tables". Each subclass should implement
+     * this method according to the layout of it's "zone of
+     * responsibility". Typical readAll() implementation consists of a
+     * number of consecutive calls to some of the
+     * read{,Byte,Short,Int,Table,ConstantPool}() methods.
+     */
+    public abstract void readAll() throws IOException, ClassFileMagicMismatch;
+
+    /* printNice() should pretty-print the info for which the
+     * particular subclass is responsible. Typical printNice()
+     * implementation obtains the needed strings via the calls to get*
+     * methods, and outputs them via System.out.
+     */
+    public abstract void printNice();
+
     
+    /* Wrapper for DataInputStream.close() */
     public void close() throws IOException {
         file.close();
     }
-
-    /* Every subclass representing any particular layout of the class
-     * file region should inplement these methods
-     */
-    abstract void readAll() throws IOException, ClassFileMagicMismatch;
-    abstract void printNice();
 
     /*-- Read methods --*/
 
@@ -64,7 +81,21 @@ abstract public class Reader {
 	return file.readInt();
     }
 
-    /* The so called tables are used in several class file structures */
+    /* The so called tables are used in several class file
+     * structures. Tables consist of zero or more variable-sized
+     * items, each item having the same layout. The idea is to read
+     * each table into the array of instances of some Reader subclass.
+     * More precisely, Reader subclass whose readAll() method is
+     * implemented in such a way as to read one item of that
+     * particular table. 
+     *
+     * We presume that whenever someone implementing the readAll()
+     * method (in some subclass of the Reader) encounters the table he
+     * needs to read, he should first implement the class (a subclass
+     * of the Reader, too) capable of reading one item of that table,
+     * and the simply call readTable() with the name of that class as
+     * an argument. The class is dynamically loaded by name here.
+     */
     protected static Reader[] readTable(String readerName) throws IOException, 
                                                                   ClassFileMagicMismatch {
         int count = readShort();

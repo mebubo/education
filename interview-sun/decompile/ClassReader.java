@@ -2,9 +2,14 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.lang.Exception;
 
+/* This class reads the whole .class file, delegating the task of
+ * reading the "tables" to other subclasses of the Reader (readers for
+ * the items of those tables are collected in the corresponding
+ * arrays).
+ */
 public class ClassReader extends Reader {
 
-    private final int classMagic = 0xcafebabe;
+    private static final int classMagic = 0xcafebabe;
     
     private int magic, minor_version, major_version;
     private int access_flags, this_class, super_class;

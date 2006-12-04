@@ -7,3 +7,4 @@
 * more generous error handling
 * check if non-ASCII names are handled correctly under locales other
    than UTF-8
+* write a test suite :)

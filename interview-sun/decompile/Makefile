@@ -29,5 +29,8 @@ Decompile.class : Decompile.java ClassReader.class
 ClassFileMagicMismatch.class : ClassFileMagicMismatch.java
 	javac $<
 
+UnknownConstantPoolTag.class : UnknownConstantPoolTag.java
+	javac $<
+
 clean:
 	rm -fr *.class

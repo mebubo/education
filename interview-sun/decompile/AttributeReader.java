@@ -1,5 +1,6 @@
 import java.io.IOException;
 
+/* Read various attributes (of a class, method, etc) */
 public class AttributeReader extends Reader {
 
     private static final String INNER_CLASSES = "InnerClasses";

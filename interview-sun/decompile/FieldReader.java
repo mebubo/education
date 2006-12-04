@@ -4,6 +4,10 @@ import java.util.regex.Matcher;
 import java.util.List;
 import java.util.ArrayList;
 
+/* This class reads fields and methods of the class, and also has
+ * quite a few methods for manipulating raw strings extracted from the
+ * constant pool 
+ */
 public class FieldReader extends Reader {
 
     private int access_flags;

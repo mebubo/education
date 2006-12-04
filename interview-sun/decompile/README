@@ -94,4 +94,19 @@ You can reach the author by email dolgovs@gmail.com
 TODO
 ====
 
-see TODO file
+See TODO file
+
+Style considerations
+====================
+
+For fields directly corresponding to the fields inside the .class
+file, the naming is the same as in [1].  (example: minor_version). For
+all other names, standard Java conventions are used (example: fileName).
+
+References
+==========
+
+The original description of class file structure is available at:
+
+[1] http://java.sun.com/docs/books/vmspec/2nd-edition/html/ClassFile.doc.html
+

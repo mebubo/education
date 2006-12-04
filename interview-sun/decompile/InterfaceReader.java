@@ -1,5 +1,6 @@
 import java.io.IOException;
 
+/* This class can read, store and print an entry in iterfaces table */
 public class InterfaceReader extends Reader {
 
     private int name_index;

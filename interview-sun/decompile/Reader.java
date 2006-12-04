@@ -196,18 +196,25 @@ abstract public class Reader {
     /* The following 4 read* methods are used in readConstantPool()
      * only, and are thus made private 
      */
+
+    /* Wrapper for DataInputStream.readFloat() */
     private static float readFloat() throws IOException {
         return file.readFloat();
     }
 
+    /* Wrapper for DataInputStream.readLong() */
     private static long readLong() throws IOException {
         return file.readLong();
     }
 
+    /* Wrapper for DataInputStream.readDouble() */
     private static double readDouble() throws IOException {
         return file.readDouble();
     }
 
+    /* Read the string according to how it's stored inside a constant
+     * pool.
+     */
     private static String readString() throws IOException {
         int length = readShort();
         byte[] bytes = new byte[length];
@@ -250,7 +257,7 @@ abstract public class Reader {
     }
     
     /* Given the index of CONSTANT_Class_info in the constant pool,
-     * return its name as a string
+     * return its name as a string.
      */
     protected static String getClassName(int class_index) {
         int name_index = (Integer)constant_pool.get(class_index-1);
@@ -259,7 +266,7 @@ abstract public class Reader {
     }
     
     /* If the ACC_INTERFACE flag is set, then the right keyword is
-     * "interface", otherwise it is "class" 
+     * "interface", otherwise it is "class".
      */
     protected static String getClassKeyword(int access_flags) {
         final int ACC_INTERFACE = 0x0200;  
@@ -285,7 +292,9 @@ abstract public class Reader {
         }
     }
 
-    /* First print pre, then each Reader[] array entry*/
+    /* First print pre, then each, except for the last, Reader[] array
+     * entry with mid appended, then the last entry, then post. 
+     */
     protected static void printTableNice(Reader[] table, 
                                          String pre, String mid, String post) {
         int length = table.length;

@@ -1,3 +1,7 @@
+The big picture.
+
+
+
 The main purpose of AttributeReader, ClassReader, FieldReader,
 InterfaceReader, which inherit from the abstract class Reader, is to
 implement methods readAll() and printAll(), specific to the layout of

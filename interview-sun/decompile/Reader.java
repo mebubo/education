@@ -108,6 +108,11 @@ abstract public class Reader {
    
     }
 
+    /* Constant pool is a very special entity, and doesn't fit into
+     * the Reader model very well. That's why it was decided that the
+     * task of reading it is best accomplished by this method, rather
+     * then subclassing Reader to get some kind of ConstantPoolReader.
+     */
     protected static void readConstantPool() throws IOException {
         /* Tags for reading constants */
         final int CONSTANT_Class = 7;
@@ -173,6 +178,8 @@ abstract public class Reader {
     }
 
     /*-- Get methods --*/
+
+    /* Compose an access string based on the value of flags */
     protected static String getAccessString(int flags) {
         /* Constants defining access flags */
         final int ACC_PUBLIC = 0x0001;
@@ -203,17 +210,26 @@ abstract public class Reader {
         return string;
     }
     
+    /* Given the index of CONSTANT_Class_info in the constant pool,
+     * return its name as a string
+     */
     protected static String getClassName(int class_index) {
         int name_index = (Integer)constant_pool.get(class_index-1);
         String raw_name = getName(name_index);
         return raw_name.replace("/", ".");
     }
     
+    /* If the ACC_INTERFACE flag is set, then the right keyword is
+     * "interface", otherwise it is "class" 
+     */
     protected static String getClassKeyword(int access_flags) {
         final int ACC_INTERFACE = 0x0200;  
         return ((access_flags & ACC_INTERFACE) != 0) ? "interface" : "class";
     }
 
+    /* Get an ordinary name (CONSTANT_Utf8_info) from the constant
+     * pool 
+     */
     protected static String getName(int name_index) {
         return (String)constant_pool.get(name_index-1);
     }
@@ -228,7 +244,7 @@ abstract public class Reader {
     }
 
     protected static void printTableNice(Reader[] table, 
-                               String pre, String mid, String post) {
+                                         String pre, String mid, String post) {
         int length = table.length;
         if(length == 0) 
             return;

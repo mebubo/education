@@ -1,3 +1,7 @@
+This directory contains the library (*Reader.java files) for parsing
+compiled Java .class files and an example program (Decompile.java)
+which makes use of the library, as well as this 
+
 The big picture.
 
 

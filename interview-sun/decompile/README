@@ -1,23 +1,45 @@
 Contents
 ========
 
-This directory contains the library (*Reader.java files) for parsing
-compiled Java .class files and an example program (Decompile.java)
-which makes use of the library, as well as Makefile, this README file
-and TODO list.
+This directory contains the classreader library (*Reader.java files)
+for parsing compiled Java .class files and an example program
+(Decompile.java) which makes use of the library, as well as Makefile,
+this README file and TODO list.
 
 The big picture
 ===============
 
+The binary .class files, which java compilers produce, consist of a
+number of fixed-width fields and a number of the so called tables. All
+the entries of any particular table have the same structure similar to
+the structure of the .class file itself (i.e. entries also consist of
+some fixed-width fields and possibly some inner tables, but in the end
+everything boils down to just simple fixed-width fields). This fact
+leads to the idea of how the parser of such structure can be
+implemented.
 
+There can be a superclass with methods to read simple fixed-width
+fields, and a number of derived classes, each corresponding to a
+particular type of the table entry (plus one for the .class file as a
+whole), and reflecting the layout of that type of entries. Superclass
+should also have a method to read a table, given a class which can
+read that table's entries. This way one can recursively obtain a
+hierarchial composition of various instances of derived classes,
+representing the contents of the .class file, and capable of printing
+that info back in the desired form. This approach was taken in the
+classreader library.
 
-Details
-=======
+Classreader library
+===================
 
 The main purpose of AttributeReader, ClassReader, FieldReader,
-InterfaceReader, which inherit from the abstract class Reader, is to
-implement methods readAll() and printAll(), specific to the layout of
-the corresponding parts of the class file.
+InterfaceReader, and other such classes which inherit from the
+abstract class Reader, is to implement methods readAll() and
+printAll(), specific to the layout of the corresponding parts of the
+class file.
+
+Decompile program
+=================
 
 Decompile class has the main() method, which implements a small
 program to print the contents of the .class file (it instanciates
@@ -26,8 +48,17 @@ info).
 
 Currently it outputs class name, access flags, superclass name, names
 of the implemented interfaces, names of the fields of the class with
-access flags, signatures of the methods (no exception info is
-available yet). All in the form close to the standard Java syntax.
+access flags, signatures of the methods including exception info,
+access specifiers and names of inner classes. All in the form close to
+the standard Java syntax.
+
+Prerequisites
+=============
+
+Other than JDK, you may need the "make" command to conviniently
+compile the sources using the supplied Makefile. The software was
+tested ander Linux, but could probably be used on any platform
+supported by Java.
 
 Usage
 =====
@@ -40,3 +71,15 @@ The program can be run in the following way:
 
    $ java Decompile <class file>
 
+
+More info
+=========
+
+Additional information can be obtained from the comments in the source
+files.
+
+
+Contacts
+========
+
+You can reach the author by email dolgovs@gmail.com

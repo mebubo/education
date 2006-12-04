@@ -18,7 +18,12 @@ public class InnerClassesAttributeReader extends Reader {
         System.out.print(getAccessString(inner_class_access_flags));
         System.out.format("%s ", getClassKeyword(inner_class_access_flags));
         //System.out.format("%s ", getClassName(inner_class_info_index));
-        System.out.print(getName(inner_name_index));
+        String name = "";
+        if(inner_name_index > 0)
+            name = getName(inner_name_index);
+        else
+            name = "<anonymous>";
+        System.out.print(name);
         System.out.println(" {/* Body omitted */}");
         
     }

@@ -5,3 +5,5 @@
 * read and output the structure of the inner classes (not only the access
    flags and the name)
 * more generous error handling
+* check if non-ASCII names are handled correctly under locales other
+   than UTF-8

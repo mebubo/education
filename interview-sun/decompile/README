@@ -3,13 +3,13 @@ Contents
 
 This directory contains the classreader library (*Reader.java files)
 for parsing compiled Java .class files and an example program
-(Decompile.java) which makes use of the library, as well as Makefile,
+(Decompile.java, which makes use of the library), as well as Makefile,
 this README file and TODO list.
 
 The big picture
 ===============
 
-The binary .class files, which java compilers produce, consist of a
+The binary .class files, which Java compilers produce, consist of a
 number of fixed-width fields and a number of the so called tables. All
 the entries of any particular table have the same structure similar to
 the structure of the .class file itself (i.e. entries also consist of
@@ -35,7 +35,7 @@ Classreader library
 The main purpose of AttributeReader, ClassReader, FieldReader,
 InterfaceReader, and other such classes which inherit from the
 abstract class Reader, is to implement methods readAll() and
-printAll(), specific to the layout of the corresponding parts of the
+printNice(), specific to the layout of the corresponding parts of the
 class file.
 
 Decompile program
@@ -72,14 +72,26 @@ The program can be run in the following way:
    $ java Decompile <class file>
 
 
+Pitfalls
+========
+
+If used on a .class file of an inner class, such as Foo$Bar.class,
+Decompile's output lists the Bar class as an inner class of the
+Foo$Bar class. I'll need to learn more about inner classes to tell
+whether this is appropriate.
+
 More info
 =========
 
 Additional information can be obtained from the comments in the source
 files.
 
-
 Contacts
 ========
 
 You can reach the author by email dolgovs@gmail.com
+
+TODO
+====
+
+see TODO file

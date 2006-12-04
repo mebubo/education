@@ -11,7 +11,8 @@ public class FieldReader extends Reader {
     private int descriptor_index;
     private Reader[] attributes;
 
-    public void readAll() throws IOException, ClassFileMagicMismatch {
+    public void readAll() throws IOException, 
+                                 ClassFileMagicMismatch, UnknownConstantPoolTag {
 	access_flags = readShort();
 	name_index = readShort();
 	descriptor_index = readShort();

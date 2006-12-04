@@ -10,10 +10,15 @@ public class AttributeReader extends Reader {
     private byte info[];
     private Reader[] attribute = null;
 
-    public void readAll() throws IOException, ClassFileMagicMismatch {
+    public void readAll() throws IOException, 
+                                 ClassFileMagicMismatch, UnknownConstantPoolTag {
 	attribute_name_index = readShort();
         attribute_name = getName(attribute_name_index);
 	attribute_length = readInt();
+        /* Handle InnerClasses and Exceptions attributes via
+         * corresponding classes. Other attributes are effectively
+         * ignored.
+         */
         if(attribute_name.equals(INNER_CLASSES)) {
             attribute = readTable("InnerClassesAttributeReader");
         } else if (attribute_name.equals(EXCEPTIONS)) {

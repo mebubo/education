@@ -5,7 +5,7 @@ import java.io.EOFException;
 public class Decompile {
 
     private static void errorMessage(String message) {
-        System.err.println("\n\nE: " + message);
+        System.err.println("\nE: " + message);
         System.exit(1);
     }
 
@@ -37,6 +37,9 @@ public class Decompile {
                 errorMessage("File not found!");
             } catch(EOFException ex) {
                 errorMessage("Class file format seems to be invalid!");
+            } catch (UnknownConstantPoolTag ex) {
+                errorMessage("Class file format seems to be invalid" + 
+                             " (unknown tag in constant pool)!");
             } catch(NullPointerException ex) {
                 bug();
             } finally {

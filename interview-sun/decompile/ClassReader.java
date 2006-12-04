@@ -19,7 +19,8 @@ public class ClassReader extends Reader {
 	super(fileName);
     }
 
-    public void readAll() throws IOException, ClassFileMagicMismatch {
+    public void readAll() throws IOException, 
+                                 ClassFileMagicMismatch, UnknownConstantPoolTag {
 	magic = readInt();
         if(magic != classMagic) 
             throw new ClassFileMagicMismatch();

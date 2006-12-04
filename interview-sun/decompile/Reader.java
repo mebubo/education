@@ -38,7 +38,8 @@ abstract public class Reader {
      * number of consecutive calls to some of the
      * read{,Byte,Short,Int,Table,ConstantPool}() methods.
      */
-    public abstract void readAll() throws IOException, ClassFileMagicMismatch;
+    public abstract void readAll() throws IOException, 
+                                          ClassFileMagicMismatch, UnknownConstantPoolTag;
 
     /* printNice() should pretty-print the info for which the
      * particular subclass is responsible. Typical printNice()
@@ -93,7 +94,8 @@ abstract public class Reader {
      * an argument. The class is dynamically loaded by name here.
      */
     protected static Reader[] readTable(String readerName) throws IOException, 
-                                                                  ClassFileMagicMismatch {
+                                                                  ClassFileMagicMismatch, 
+                                                                  UnknownConstantPoolTag {
         int count = readShort();
         Reader[] items = new Reader[count];
         try {
@@ -125,7 +127,7 @@ abstract public class Reader {
      * this method, rather then subclassing Reader to get some kind of
      * ConstantPoolReader.
      */
-    protected static void readConstantPool() throws IOException {
+    protected static void readConstantPool() throws IOException, UnknownConstantPoolTag {
         /* Tags for reading constants */
         final int CONSTANT_Class = 7;
         final int CONSTANT_Fieldref = 9;
@@ -166,11 +168,17 @@ abstract public class Reader {
                 break;
             case CONSTANT_Long :
                 cp.add(new Long(readLong()));
+                /* CONSTANT_Long effectively occupies 2 entries in
+                 * constant pool 
+                 */
                 cp.add(null);
                 i++;
                 break;
             case CONSTANT_Double :
                 cp.add(new Double(readDouble()));
+                /* CONSTANT_Double effectively occupies 2 entries in
+                 * constant pool 
+                 */
                 cp.add(null);
                 i++;
                 break;
@@ -184,6 +192,10 @@ abstract public class Reader {
                 cp.add(readString());
             }
                 break;
+            default: {
+                /* An exception should be thrown here */
+                throw new UnknownConstantPoolTag();
+            }
             }
         }
         constant_pool = cp;

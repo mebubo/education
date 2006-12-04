@@ -31,6 +31,7 @@ public class FieldReader extends Reader {
         System.out.format("%s", getType(descriptor_index));
         System.out.format("%s", getName(name_index));
         System.out.format("%s", getArgs(descriptor_index));
+        printTableNice(attributes);
         System.out.println(";");
     }
 

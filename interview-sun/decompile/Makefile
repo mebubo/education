@@ -1,5 +1,6 @@
-all: Reader.class ClassReader.class FieldReader.class \
-	AttributeReader.class InterfaceReader.class Decompile.class
+CLASSES := $(patsubst %.java,%.class,$(wildcard *.java))
+
+all: $(CLASSES)
 
 Reader.class: Reader.java
 	javac $<
@@ -13,10 +14,19 @@ FieldReader.class : FieldReader.java Reader.class
 AttributeReader.class : AttributeReader.java Reader.class
 	javac $<
 
+InnerClassesAttributeReader.class : InnerClassesAttributeReader.java Reader.class
+	javac $<
+
+ExceptionsAttributeReader.class : ExceptionsAttributeReader.java Reader.class
+	javac $<
+
 InterfaceReader.class : InterfaceReader.java Reader.class
 	javac $<
 
 Decompile.class : Decompile.java ClassReader.class
+	javac $<
+
+ClassFileMagicMismatch.class : ClassFileMagicMismatch.java
 	javac $<
 
 clean:

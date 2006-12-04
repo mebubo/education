@@ -70,7 +70,10 @@ public class ClassReader extends Reader {
         printTableNice(fields, "\t", "\t", "");
 
         System.out.println("\n\t/* Methods */");
-        printTableNice(methods, "\t", "\t", "\n");
+        printTableNice(methods, "\t", "\t", "");
+
+        System.out.println("\n\t/* Inner Classes */");
+        printTableNice(attributes);
 
         System.out.println("}");
     }

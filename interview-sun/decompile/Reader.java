@@ -6,6 +6,10 @@ import java.util.ArrayList;
 
 abstract public class Reader {
 
+    class Foo {}
+    
+    interface Bar{}
+
     /*-- Fields --*/
     
     /* This object should represent the .class file beeing read */

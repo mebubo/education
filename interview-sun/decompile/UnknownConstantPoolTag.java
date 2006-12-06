@@ -1,0 +1,1 @@
+class UnknownConstantPoolTag extends Exception {}

@@ -16,3 +16,14 @@ birds
 (setcdr birds '(perch rutilus esox))
 birds
 
+;; 8.7
+(defun test-search (str)
+  (interactive "MSearch string: ")
+  (search-forward str)
+  (message "Found!"))
+
+(defun third-kill ()
+  (interactive)
+  (if (> (length kill-ring) 2)
+      (message (nth 3 kill-ring))
+    (message "No")))

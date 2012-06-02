@@ -28,8 +28,34 @@ def more_pour_problem(capacities, goal, start=None):
     On success return a path: a [state, action, state2, ...] list, where an
     action is one of ('fill', i), ('empty', i), ('pour', i, j), where
     i and j are indices indicating the glass number."""
-    # your code here
-
+    indices = range(len(capacities))
+    if start is None:
+        start = tuple(0 for _ in indices)
+    def is_goal(state):
+        return goal in state
+    def replace(state, i, val):
+        state = list(state)
+        state[i] = val
+        return tuple(state)
+    def pour(state, fr, to):
+        sf, st, ct = state[fr], state[to], capacities[to]
+        amount = min(sf, ct - st)
+        state = replace(state, to, st + amount)
+        state = replace(state, fr, sf - amount)
+        return state
+    def successors(state):
+        return dict(
+            # fill
+            [(replace(state, i, capacities[i]), ('fill', i)) for i in indices
+             if state[i] != capacities[i]] +
+            # empty
+            [(replace(state, i, 0), ('empty', i)) for i in indices
+             if state[i] != 0] +
+            # pour
+            [(pour(state, i, j), ('pour', i, j))
+             for i in indices for j in indices
+             if i != j and state[i] != 0 and state[j] != capacities[j]])
+    return shortest_path_search(start, successors, is_goal)
 
 def shortest_path_search(start, successors, is_goal):
     """Find the shortest path from start state to a state
@@ -65,3 +91,4 @@ def test_more_pour():
     return 'test_more_pour passes'
 
 print test_more_pour()
+#print more_pour_problem((1, 2, 4, 8), 5)((0,0,0,0))

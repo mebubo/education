@@ -19,7 +19,19 @@ def bsuccessors3(state):
     where here and there are frozen sets of people, light is 0 if the light is
     on the here side and 1 if it is on the there side.
     Action is a tuple (travelers, arrow) where arrow is '->' or '<-'"""
+    _, _, light = state
+    return dict(bsuccessor3(state, set([a, b]))
+            for a in state[light]
+            for b in state[light])
 
+def bsuccessor3(state, travellers):
+    _, _, light = state
+    start = state[light] - travellers
+    dest = state[1-light] | travellers
+    if light == 0:
+        return (start, dest, 1), (travellers, '->')
+    else:
+        return (dest, start, 0), (travellers, '<-')
 
 def test():
     assert bsuccessors3((frozenset([1]), frozenset([]), 0)) == {

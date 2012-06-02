@@ -26,10 +26,25 @@
 # longest_ride() will be explicitly tested. If your code passes the
 # assert statements in test_ride(), it should be marked correct.
 
+def neighbors(stations, station):
+    if station not in stations:
+        return
+    i = stations.index(station)
+    if i > 0:
+        yield stations[i-1]
+    if i < len(stations)-1:
+        yield stations[i+1]
+
 def subway(**lines):
     """Define a subway map. Input is subway(linename='station1 station2...'...).
     Convert that and return a dict of the form: {station:{neighbor:line,...},...}"""
-    ## your code here
+    result = {}
+    for line, stations in lines.items():
+        stations = stations.split()
+        for station in stations:
+            for neigh in neighbors(stations, station):
+                    result.setdefault(station, {})[neigh] = line
+    return result
 
 boston = subway(
     blue='bowdoin government state aquarium maverick airport suffolk revere wonderland',
@@ -39,12 +54,13 @@ boston = subway(
 
 def ride(here, there, system=boston):
     "Return a path on the subway system from here to there."
-    ## your code here
+    return shortest_path_search(here, lambda s: system[s], lambda s: s == there)
 
 def longest_ride(system):
     """"Return the longest possible 'shortest path'
     ride between any two stops in the system."""
-    ## your code here
+    stations = system.keys()
+    return max((ride(h, t, system) for h in stations for t in stations), key=len)
 
 def shortest_path_search(start, successors, is_goal):
     """Find the shortest path from start state to a state

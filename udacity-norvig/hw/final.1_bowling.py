@@ -35,9 +35,40 @@ For example, bowling([10, 7, 3, ...]) means that you get a strike, you score
 
 def bowling(balls):
     "Compute the total score for a player's game of bowling."
-    ## bowling([int, ...]) -> int
-    ## your code here
-
+    score = [0]
+    strike = [0, 0]
+    spare = [0]
+    i = 0
+    frame = 1
+    def advance():
+        curr = balls[i]
+        score[0] += curr
+        score[0] += curr * strike[0]
+        strike[0], strike[1] = strike[1], 0
+        score[0] += curr * spare[0]
+        spare[0] = 0
+        return curr
+    while i < len(balls):
+        s1 = advance()
+        if s1 == 10:
+            # strike
+            strike = [strike[0]+1, strike[1]+1]
+            if frame == 10:
+                score[0] += strike[0] * balls[i+1]
+                score[0] += strike[1] * balls[i+2]
+                break
+        else:
+            i += 1
+            s2 = advance()
+            if s1 + s2 == 10:
+                # spare
+                spare[0] += 1
+                if frame == 10:
+                    score[0] += spare[0] * balls[i+1]
+                    break
+        i += 1
+        frame += 1
+    return score[0]
 
 def test_bowling():
     assert   0 == bowling([0] * 20)

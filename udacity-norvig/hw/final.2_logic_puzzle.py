@@ -34,26 +34,60 @@ then you would return:
 # gadget: laptop, droid, tablet, iphone
 # profession: programmer, writer, manager, designer
 
-import itertools
+import itertools, time
 
-def logic_puzzle():
+def logic_puzzle_gen():
     "Return a list of the names of the people, in the order they arrive."
     days = (Monday, Tuesday, Wednesday, Thursday, Friday) = range(1, 6)
     orderings = list(itertools.permutations(days))
     ans = next(((Hamming, 'Hamming'), (Knuth, 'Knuth'), (Minsky, 'Minsky'), (Simon, 'Simon'), (Wilkes, 'Wilkes'))
                for Hamming, Knuth, Minsky, Simon, Wilkes in orderings
+               if Knuth == Simon + 1
                for laptop, droid, tablet, iphone, _ in orderings
-               for programmer, writer, manager, designer, _ in orderings
+               if Tuesday in (iphone, tablet)
+               if tablet != Friday
                if Wednesday is laptop
+               for programmer, writer, manager, designer, _ in orderings
                if programmer != Wilkes
                if ((programmer, droid) == (Wilkes, Hamming)) or ((programmer, droid) == (Hamming, Wilkes))
                if writer != Minsky
                if manager not in (Knuth, tablet)
-               if Knuth == Simon + 1
                if designer != Thursday
-               if tablet != Friday
                if designer != droid
                if Knuth == manager + 1
                if ((laptop, Wilkes) == (Monday, writer)) or ((laptop, Wilkes) == (writer, Monday))
-               if Tuesday in (iphone, tablet))
+               )
     return [name for i, name in sorted(ans)]
+
+def logic_puzzle():
+    "Return a list of the names of the people, in the order they arrive."
+    days = (Monday, Tuesday, Wednesday, Thursday, Friday) = range(1, 6)
+    orderings = list(itertools.permutations(days))
+    for Hamming, Knuth, Minsky, Simon, Wilkes in orderings:
+        if Knuth == Simon + 1:
+            for laptop, droid, tablet, iphone, _ in orderings:
+               if (Tuesday in (iphone, tablet)) \
+               and (tablet != Friday) \
+               and (Wednesday is laptop):
+                   for programmer, writer, manager, designer, _ in orderings:
+                       if (programmer != Wilkes) \
+                               and (((programmer, droid) == (Wilkes, Hamming)) or ((programmer, droid) == (Hamming, Wilkes))) \
+                               and (writer != Minsky) \
+                               and (manager not in (Knuth, tablet)) \
+                               and (designer != Thursday) \
+                               and (designer != droid) \
+                               and (Knuth == (manager + 1)) \
+                               and (((laptop, Wilkes) == (Monday, writer)) or ((laptop, Wilkes) == (writer, Monday))):
+                           ans = ((Hamming, 'Hamming'), (Knuth, 'Knuth'), (Minsky, 'Minsky'), (Simon, 'Simon'), (Wilkes, 'Wilkes'))
+                           break
+    return [name for i, name in sorted(ans)]
+
+def timedcall(fn, *args):
+    "Call function with args; return the time in seconds and result."
+    t0 = time.clock()
+    result = fn(*args)
+    t1 = time.clock()
+    return t1-t0, result
+
+print timedcall(logic_puzzle_gen)
+print timedcall(logic_puzzle)

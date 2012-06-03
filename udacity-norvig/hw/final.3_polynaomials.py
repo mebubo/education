@@ -51,14 +51,77 @@ Your task is to write the function poly and the following additional functions:
 They are described below; see the test_poly function for examples.
 """
 
+from collections import defaultdict
 
-def poly(coefs):
+def poly_f(coefs):
     """Return a function that represents the polynomial with these coefficients.
     For example, if coefs=(10, 20, 30), return the function of x that computes
     '30 * x**2 + 20 * x + 10'.  Also store the coefs on the .coefs attribute of
     the function, and the str of the formula on the .__name__ attribute.'"""
-    # your code here (I won't repeat "your code here"; there's one for each function)
+    def _poly(x):
+        return sum(c * x**i for i, c in enumerate(coefs))
+    _poly.coefs = coefs
+    powers = ["x**%d" % p for p in range(len(coefs)-1, 2, -1)]
+    terms = [("%d * x**%d" % (c, p)) if c != 1 else ("x**%d" % p)
+             for (p, c) in reversed(list(enumerate(coefs))[2:]) if c != 0]
+    if len(coefs) >= 2 and coefs[1] != 0:
+        terms.append("%d * x" % coefs[1] if coefs[1] != 1 else "x")
+    if len(coefs) >= 1 and coefs[0] != 0:
+        terms.append("%d" % coefs[0])
+    _poly.__name__ = " + ".join(terms)
+    return _poly
 
+class poly(object):
+
+    def __init__(self, coefs):
+        self.coefs = coefs
+        self.__name__ = repr(self)
+
+    def __call__(self, x):
+        return sum(c * x**i for i, c in enumerate(self.coefs))
+
+    def __repr__(self):
+        coefs = self.coefs
+        powers = ["x**%d" % p for p in range(len(coefs)-1, 2, -1)]
+        terms = [("%d * x**%d" % (c, p)) if c != 1 else ("x**%d" % p)
+                 for (p, c) in reversed(list(enumerate(coefs))[2:]) if c != 0]
+        if len(coefs) >= 2 and coefs[1] != 0:
+            terms.append("%d * x" % coefs[1] if coefs[1] != 1 else "x")
+        if len(coefs) >= 1 and coefs[0] != 0:
+            terms.append("%d" % coefs[0])
+        return " + ".join(terms)
+
+    def __add__(self, b):
+        if not isinstance(b, poly):
+            b = poly((b,))
+        return add(self, b)
+
+    def __sub__(self, b):
+        if not isinstance(b, poly):
+            b = poly((b,))
+        return sub(self, b)
+
+    def __mul__(self, b):
+        if not isinstance(b, poly):
+            b = poly((b,))
+        return mul(self, b)
+
+    def __pow__(self, n):
+        return power(self, n)
+
+    def __radd__(self, b):
+        return self.__add__(b)
+
+    def __rsub__(self, b):
+        if not isinstance(b, poly):
+            b = poly((b,))
+        return sub(b, self)
+
+    def __rmul__(self, b):
+        return self.__mul__(b)
+
+    def __eq__(self, b):
+        return self.coefs == b.coefs
 
 def test_poly():
     global p1, p2, p3, p4, p5, p9 # global to ease debugging in an interactive session
@@ -109,23 +172,38 @@ def same_name(name1, name2):
 
 def is_poly(x):
     "Return true if x is a poly (polynomial)."
-    ## For examples, see the test_poly function
+    try:
+        x.coefs
+        return True
+    except:
+        return False
 
 def add(p1, p2):
     "Return a new polynomial which is the sum of polynomials p1 and p2."
-
+    l1, l2 = len(p1.coefs), len(p2.coefs)
+    mi, ma = min(l1, l2), max(l1, l2)
+    coefs = tuple(a+b for a, b in zip(p1.coefs, p2.coefs))
+    for p in (p1, p2):
+        coefs += tuple(p.coefs[mi:ma])
+    return poly(coefs)
 
 def sub(p1, p2):
     "Return a new polynomial which is the difference of polynomials p1 and p2."
-
+    mp2 = poly(tuple(-c for c in p2.coefs))
+    return add(p1, mp2)
 
 def mul(p1, p2):
     "Return a new polynomial which is the product of polynomials p1 and p2."
-
+    d = defaultdict(int)
+    for e1, c1 in enumerate(p1.coefs):
+        for e2, c2 in enumerate(p2.coefs):
+            d[e1 + e2] += c1 * c2
+    coefs = tuple(d[e] for e in sorted(d.keys()))
+    return poly(coefs)
 
 def power(p, n):
     "Return a new polynomial which is p to the nth power (n a non-negative integer)."
-
+    return reduce(lambda x, y: mul(x, y), [p] * n)
 
 """
 If your calculus is rusty (or non-existant), here is a refresher:
@@ -141,11 +219,12 @@ to the function integral (withh default C=0).
 
 def deriv(p):
     "Return the derivative of a function p (with respect to its argument)."
-
+    return poly(tuple(e * p.coefs[e] for e in range(1, len(p.coefs))))
 
 def integral(p, C=0):
     "Return the integral of a function p (with respect to its argument)."
-
+    coefs = tuple(p.coefs[e]/(e+1) for e in range(len(p.coefs)))
+    return poly((C,) + coefs)
 
 """
 Now for an extra credit challenge: arrange to describe polynomials with an
@@ -175,3 +254,6 @@ def test_poly2():
     newp1 = Poly('30 * x**2 + 20 * x + 10')
     assert p1(100) == newp1(100)
     assert same_name(p1.__name__,newp1.__name__)
+
+test_poly()
+test_poly1()

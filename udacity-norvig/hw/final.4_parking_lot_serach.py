@@ -1,3 +1,5 @@
+from itertools import count
+
 """
 UNIT 4: Search
 
@@ -109,6 +111,44 @@ def solve_parking_puzzle(start, N=N):
     of (object, locations) pairs).  Return a path of [state, action, ...]
     alternating items; an action is a pair (object, distance_moved),
     such as ('B', 16) to move 'B' two squares down on the N=8 grid."""
+    return shortest_path_search(start, successors, is_goal)
+
+deltas = (+1, -1, +N, -N)
+
+def move(state, car, delta):
+    s = dict(state)
+    c = s[car]
+    return tuple(x + delta for x in c)
+
+def is_car(sym):
+    return sym.isalpha() or sym == '*'
+
+def is_collision(state, car):
+    state = dict(state)
+    x = list(c in state[k] for c in state[car] for k in state.keys() if k != '@' and k != car)
+    return any(x)
+
+def successors(state):
+    state = dict(state)
+    for car in (c for c in state.keys() if is_car(c)):
+        for delta in deltas:
+            c0, c1 = state[car][0], state[car][1]
+            # can only move along the car axis
+            if abs(c1 - c0) != abs(delta):
+                continue
+            for steps in count(1):
+                d = delta * steps
+                new_car = move(state, car, d)
+                new_state = state.copy()
+                new_state[car] = new_car
+                if is_collision(new_state, car):
+                    break
+                else:
+                    yield tuple(new_state.items()), (car, d)
+
+def is_goal(state):
+    s = dict(state)
+    return any(c in s['@'] for c in s['*'])
 
 # But it would also be nice to have a simpler format to describe puzzles,
 # and a way to visualize states.
@@ -116,7 +156,7 @@ def solve_parking_puzzle(start, N=N):
 
 def locs(start, n, incr=1):
     "Return a tuple of n locations, starting at start and incrementing by incr."
-
+    return tuple(start + i * incr for i in range(n))
 
 def grid(cars, N=N):
     """Return a tuple of (object, locations) pairs -- the format expected for
@@ -126,7 +166,12 @@ def grid(cars, N=N):
     pair, like ('@', (31,)), to indicate this. The variable 'cars'  is a
     tuple of pairs like ('*', (26, 27)). The return result is a big tuple
     of the 'cars' pairs along with the walls and goal pairs."""
+    goal = ((N*N/2)-1,)
+    wall = tuple(set(locs(0, N) + locs(N*(N-1), N) + locs(0, N, N) + locs(N-1, N, N)) - set(goal))
+    return cars + (("|", wall), ('@', goal))
 
+def show_d(state, N=N):
+    show(((k, v) for (k, v) in state.items()), N)
 
 def show(state, N=N):
     "Print a representation of a state as an NxN grid."
@@ -165,6 +210,21 @@ puzzle3 = grid((
     ('O', locs(45, 2, N)),
     ('Y', locs(49, 3))))
 
+puzzle4 = grid((
+    ('*', (30, 31)),
+    ('B', locs(19, 3, N)),
+    ('P', locs(36, 3)),
+    ('O', locs(45, 2, N)),
+    ('Y', locs(49, 3))))
+
+puzzle5 = grid((
+        ('A', (22, 30)),
+        ('*', (28, 29)),))
+
+puzzle6 = grid((
+        ('A', (22, 30)),
+        ))
+
 
 # Here are the shortest_path_search and path_actions functions from the unit.
 # You may use these if you want, but you don't have to.
@@ -179,7 +239,7 @@ def shortest_path_search(start, successors, is_goal):
     while frontier:
         path = frontier.pop(0)
         s = path[-1]
-        for (state, action) in successors(s).items():
+        for (state, action) in successors(s):
             if state not in explored:
                 explored.add(state)
                 path2 = path + [action, state]

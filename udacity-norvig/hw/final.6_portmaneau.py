@@ -51,8 +51,23 @@ input words. But you could implement a method that is efficient with a
 larger list of words.
 """
 
+def split(word):
+    return [(word[:i], word[i:]) for i in range(1, len(word))]
+
+def score(abc):
+    l = len(''.join(abc))
+    coefs = 4.0, 2.0, 4.0
+    return l - sum([abs(len(x) - l/c) for x, c in zip(abc, coefs)])
+
 def natalie(words):
     "Find the best Portmanteau word formed from any two of the list of words."
+    if not words:
+        return None
+    splits = reduce(lambda x, y: x + y, map(split, words))
+    portmanteaux = [(p1, s1, s2) for p1, s1 in splits for p2, s2 in splits
+                    if s1 == p2 and (p1 + s1 != p2 + s2)]
+    if portmanteaux:
+        return ''.join(max(portmanteaux, key=score))
 
 def test_natalie():
     "Some test cases for natalie"

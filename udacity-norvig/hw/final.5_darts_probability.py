@@ -164,42 +164,53 @@ is large; also, it is always possible to miss a double, and thus there is
 no guarantee that the game will end in a finite number of moves.
 """
 
-sectors = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5]
+SECTORS = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5]
 
 def adjacent(sector):
-    i = sectors.index(sector)
-    N = len(sectors)
-    return (sectors[(i - 1) % N], sectors[(i + 1) % N])
+    i = SECTORS.index(sector)
+    N = len(SECTORS)
+    return (SECTORS[(i - 1) % N], SECTORS[(i + 1) % N])
 
 def distrib_sectors(ring, sector, miss, prob):
-    res = [(ring, sector, prob*(1-miss))]
+    # hit
+    yield ring, sector, prob * (1 - miss)
     if sector == 'B':
-        res.extend(('S', s, prob*miss/len(sectors)) for s in sectors)
+        ring = 'S'
+        # missing on bull spreads over all sectors
+        sectors = SECTORS
     else:
-        for s in adjacent(sector):
-            res.append((ring, s, prob*(miss/2.)))
-    return res
+        # otherwise, only adjasent
+        sectors = adjacent(sector)
+    for s in sectors:
+        yield ring, s, prob * miss / len(sectors)
 
 def distrib_rings(ring, sector, miss, prob):
+    if ring == 'D' and sector == 'B':
+            miss = 3 * miss
+    elif ring == 'S' and sector != 'B':
+            miss = miss / 5.
+    # hit
+    yield ring, sector, prob * (1 - miss)
     if sector == 'B':
         if ring == 'S':
-            res = [(ring, sector, prob*(1-miss))]
-            res.append(('D', sector, prob*(miss/4.)))
-            res.extend(('S', s, prob*(miss * 3/4.)/len(sectors)) for s in sectors)
-        if ring == 'D':
-            res = [(ring, sector, prob*(1-3*miss))]
-            res.append(('S', sector, prob*(3*miss * 1/3.)))
-            res.extend(('S', s, prob*(3*miss * 2/3.)/len(sectors)) for s in sectors)
+            # probability that we miss but stay in the bull rings
+            p_bull = 1/4.
+        else:
+            p_bull = 1/3.
+        # other bull ring
+        yield 'D' if ring == 'S' else 'S', sector, prob * miss * p_bull
+        # sectors in the "single" ring
+        for s in SECTORS:
+            yield 'S', s, prob * miss * (1 - p_bull) / len(SECTORS)
     else:
-        res = [(ring, sector, prob*(1-miss))]
         if ring == 'S':
-            res.append(('D', sector, prob*(miss/10.)))
-            res.append(('T', sector, prob*(miss/10.)))
+            yield 'D', sector, prob * miss / 2.
+            yield 'T', sector, prob * miss / 2.
         if ring == 'D':
-            res.append(('S', sector, prob*(miss/2.)))
+            # the second half is off the board
+            yield 'S', sector, prob * miss / 2.
         if ring == 'T':
-            res.append(('S', sector, prob*(miss)))
-    return res
+            yield 'S', sector, prob * miss
 
 def average(outcome):
     return sum((value(target) * p) for target, p in outcome.items()) / len(outcome)
@@ -239,3 +250,6 @@ def test_darts2():
              'S19': 0.016, 'S18': 0.016, 'S13': 0.016, 'S12': 0.016, 'S11': 0.016,
              'S10': 0.016, 'S17': 0.016, 'S16': 0.016, 'S15': 0.016, 'S14': 0.016,
              'S7': 0.016, 'SB': 0.64}))
+
+test_darts()
+test_darts2()

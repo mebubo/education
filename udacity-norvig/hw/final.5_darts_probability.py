@@ -1,5 +1,7 @@
 # Unit 5: Probability in the game of Darts
 
+from collections import defaultdict
+
 """
 In the game of darts, players throw darts at a board to score points.
 The circular board has a 'bulls-eye' in the center and 20 slices
@@ -54,12 +56,55 @@ we must choose a double for the last dart, but for the others I prefer the
 easiest targets first: 'S' is easiest, then 'T', then 'D'.
 """
 
+S = range(1, 21) + [25]
+D = [x*2 for x in S]
+T = [x*3 for x in range(1, 21)]
+
+ALL = [0] + sorted(set(S) | set(D) | set(T), reverse=True)
+
+def name(d):
+    if d in S:
+        return "S%d" % d if d != 25 else 'SB'
+    if d in D:
+        return "D%d" % (d/2) if d != 50 else 'DB'
+    if d in T:
+        return "T%d" % (d/3)
+
+def name_double(d):
+    if d in D:
+        return "D%d" % (d/2) if d != 50 else 'DB'
+
+def get_ring_sector(name):
+    ring, sector = name[0], name[1:]
+    if sector != 'B':
+        sector = int(sector)
+    return ring, sector
+
+def value(name):
+    ring, sector = get_ring_sector(name)
+    if sector == 'B':
+        sector = 25
+    ring = {'S': 1, 'D': 2, 'T': 3}[ring]
+    return ring * sector
+
+def name_all(l):
+    return [name(a) for a in l[:-1]] + [name_double(l[-1])]
+
+def remove_zeroes(l):
+    return [a for a in l if a != 0]
 
 def double_out(total):
     """Return a shortest possible list of targets that add to total,
     where the length <= 3 and the final element is a double.
     If there is no solution, return None."""
-    # your code here
+    candidates = ((a, b, c) for a in ALL
+                  for b in ALL
+                  for c in ALL
+                  if a + b + c == total and name_double(c))
+    candidates = map(remove_zeroes, candidates)
+    candidates = map(name_all, candidates)
+    if candidates:
+        return sorted(candidates, key=len)[0]
 
 """
 It is easy enough to say "170 points? Easy! Just hit T20, T20, DB."
@@ -119,14 +164,60 @@ is large; also, it is always possible to miss a double, and thus there is
 no guarantee that the game will end in a finite number of moves.
 """
 
+sectors = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5]
+
+def adjacent(sector):
+    i = sectors.index(sector)
+    N = len(sectors)
+    return (sectors[(i - 1) % N], sectors[(i + 1) % N])
+
+def distrib_sectors(ring, sector, miss, prob):
+    res = [(ring, sector, prob*(1-miss))]
+    if sector == 'B':
+        res.extend(('S', s, prob*miss/len(sectors)) for s in sectors)
+    else:
+        for s in adjacent(sector):
+            res.append((ring, s, prob*(miss/2.)))
+    return res
+
+def distrib_rings(ring, sector, miss, prob):
+    if sector == 'B':
+        if ring == 'S':
+            res = [(ring, sector, prob*(1-miss))]
+            res.append(('D', sector, prob*(miss/4.)))
+            res.extend(('S', s, prob*(miss * 3/4.)/len(sectors)) for s in sectors)
+        if ring == 'D':
+            res = [(ring, sector, prob*(1-3*miss))]
+            res.append(('S', sector, prob*(3*miss * 1/3.)))
+            res.extend(('S', s, prob*(3*miss * 2/3.)/len(sectors)) for s in sectors)
+    else:
+        res = [(ring, sector, prob*(1-miss))]
+        if ring == 'S':
+            res.append(('D', sector, prob*(miss/10.)))
+            res.append(('T', sector, prob*(miss/10.)))
+        if ring == 'D':
+            res.append(('S', sector, prob*(miss/2.)))
+        if ring == 'T':
+            res.append(('S', sector, prob*(miss)))
+    return res
+
+def average(outcome):
+    return sum((value(target) * p) for target, p in outcome.items()) / len(outcome)
 
 def outcome(target, miss):
     "Return a probability distribution of [(target, probability)] pairs."
-    #your code here
+    ring, sector = get_ring_sector(target)
+    res = defaultdict(int)
+    for r, s, p in distrib_rings(ring, sector, miss, 1):
+        for r2, s2, p2 in distrib_sectors(r, s, miss, p):
+            if p2 > 0:
+                res['%s%s' % (r2, s2)] += p2
+    return res
 
 def best_target(miss):
     "Return the target that maximizes the expected score."
-    #your code here
+    averages = ((average(outcome(t, miss)), t) for t in map(name, ALL[1:]))
+    return sorted(averages, reverse=True)[0][1]
 
 def same_outcome(dict1, dict2):
     "Two states are the same if all corresponding sets of locs are the same."

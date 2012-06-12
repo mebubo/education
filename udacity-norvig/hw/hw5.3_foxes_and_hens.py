@@ -34,11 +34,24 @@ def foxes_and_hens(strategy, foxes=7, hens=45):
         state = (score, yard, cards) = do(action, state)
     return score + yard
 
+def draw(cards):
+    i = random.randrange(len(cards))
+    return cards[i], cards[:i] + cards[i+1:]
+
 def do(action, state):
     "Apply action to state, returning a new state."
     # Make sure you always use up one card.
-    #
-    # your code here
+    score, yard, cards = state
+    c, cards = draw(cards)
+    if action == 'gather':
+        score += yard
+        yard = 0
+    elif action == 'wait':
+        if c == 'H':
+            yard += 1
+        elif c == 'F':
+            yard = 0
+    return score, yard, cards
 
 def take5(state):
     "A strategy that waits until there are 5 hens in yard, then gathers."
@@ -53,11 +66,19 @@ def average_score(strategy, N=1000):
 
 def superior(A, B=take5):
     "Does strategy A have a higher average score than B, by more than 1.5 point?"
+    print average_score(A), average_score(B)
     return average_score(A) - average_score(B) > 1.5
+
+def cnt(seq, e):
+    return len([a for a in seq if a == e])
 
 def strategy(state):
     (score, yard, cards) = state
-    # your code here
+    f, h = cnt(cards, 'F'), cnt(cards, 'H')
+    if yard < 3:
+        return 'wait'
+    else:
+        return 'gather'
 
 def test():
     gather = do('gather', (4, 5, 'F'*4 + 'H'*10))

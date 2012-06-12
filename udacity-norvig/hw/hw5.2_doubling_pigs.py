@@ -31,10 +31,24 @@ def pig_actions_d(state):
     # for the moment at which one player has doubled and is waiting
     # for the other to accept or decline
     (p, me, you, pending, double) = state
-    # your code here
+    if pending == 0:
+        rollhold = ['roll']
+    else:
+        rollhold = ['roll', 'hold']
+    if double == 'double':
+        return ['accept', 'decline']
+    elif double == 1:
+        return rollhold + ['double']
+    elif double > 1:
+        return rollhold
 
 def strategy_d(state):
     # your code here
+    (p, me, you, pending, double) = state
+    return ('accept' if double == 'double' else
+            'double' if (double == 1) and (me + pending - you > 17) else
+            'hold' if (pending >= 20 or me + pending >= goal) else
+            'roll')
 
 
 ## You can use the code below, but don't need to modify it.

@@ -15,12 +15,48 @@
 # your function returns should include 'AN ARM SAG', but should NOT
 # include 'ARM SAG AN', or 'SAG AN ARM', etc...
 
+def anagrams_slow(phrase, shortest=2):
+    """Return a set of phrases with words from WORDS that form anagram
+    of phrase. Spaces can be anywhere in phrase or anagram. All words
+    have length >= shortest. Phrases in answer must have words in
+    lexicographic order (not all permutations)."""
+    letters = phrase.replace(' ', '')
+    r = set()
+    def a(letters, results):
+        if letters == '':
+            r.add(' '.join(sorted(results)))
+        for w in find_words(letters):
+            if len(w) >= shortest:
+                a(removed(letters, w), results + [w])
+    a(letters, [])
+    return r
+
 def anagrams(phrase, shortest=2):
     """Return a set of phrases with words from WORDS that form anagram
     of phrase. Spaces can be anywhere in phrase or anagram. All words
     have length >= shortest. Phrases in answer must have words in
     lexicographic order (not all permutations)."""
-    # your code here
+    letters = phrase.replace(' ', '')
+    words = sorted(find_words(letters))
+    r = set()
+    def a(letters, index, results):
+        if letters == '':
+            r.add(' '.join(results))
+        for i, w in enumerate(words[index:]):
+            if len(w) >= shortest and contain(w, letters):
+                a(removed(letters, w), i + index, results + [w])
+    a(letters, 0, [])
+    return r
+
+def contain(word, letters):
+    """Return True if it is possible to make word out of letters,
+    False otherwise.
+    """
+    for l in word:
+        if l not in letters:
+            return False
+        letters = letters.replace(l, '', 1)
+    return True
 
 # ------------
 # Helpful functions
@@ -61,7 +97,7 @@ WORDS, PREFIXES = readwordlist('words4k.txt')
 #
 # Run the function test() to see if your function behaves as expected.
 
-def test():
+def test(anagrams=anagrams):
     assert 'DOCTOR WHO' in anagrams('TORCHWOOD')
     assert 'BOOK SEC TRY' in anagrams('OCTOBER SKY')
     assert 'SEE THEY' in anagrams('THE EYES')
@@ -73,4 +109,13 @@ def test():
         'CON HYP TI'])
     return 'tests pass'
 
-print test()
+import time
+def timedcall(fn, *args):
+    "Call function with args; return the time in seconds and result."
+    t0 = time.clock()
+    result = fn(*args)
+    t1 = time.clock()
+    return t1-t0, result
+
+print timedcall(test)
+print timedcall(test, anagrams_slow)

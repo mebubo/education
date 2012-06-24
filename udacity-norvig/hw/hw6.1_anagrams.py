@@ -48,6 +48,21 @@ def anagrams(phrase, shortest=2):
     a(letters, 0, [])
     return r
 
+def anagrams_norvig(phrase, shortest=2):
+    return find_anagrams(phrase.replace(' ', ''), '', shortest)
+
+def find_anagrams(letters, previous_word, shortest):
+    result = set()
+    for word in find_words(letters):
+        if len(word) >= shortest and word >= previous_word:
+            remainder = removed(letters, word)
+            if remainder:
+                for w in find_anagrams(remainder, word, shortest):
+                    result.add(word + ' ' + w)
+            else:
+                result.add(word)
+    return result
+
 def contain(word, letters):
     """Return True if it is possible to make word out of letters,
     False otherwise.
@@ -119,3 +134,4 @@ def timedcall(fn, *args):
 
 print timedcall(test)
 print timedcall(test, anagrams_slow)
+print timedcall(test, anagrams_norvig)

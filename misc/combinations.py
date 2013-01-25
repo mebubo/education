@@ -10,6 +10,18 @@ def combinations(p, r):
     else:
         return [([p[0]] + t) for t in combinations(p[1:], r-1)] + combinations(p[1:], r)
 
+def combinations_with_rep(l, k):
+    if k == 1:
+        for e in l:
+            yield [e]
+        return
+    if len(l) == 0:
+        return
+    for comb in combinations_with_rep(l, k-1):
+        yield comb + [l[0]]
+    for comb in combinations_with_rep(l[1:], k):
+        yield comb
+
 def combinations2(iterable, r):
     # combinations('ABCD', 2) --> AB AC AD BC BD CD
     # combinations(range(4), 3) --> 012 013 023 123

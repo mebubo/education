@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class E01_01_Test {
+public class E01_01Test {
     @Test
     public void testAllUnique() throws Exception {
         test(E01_01::allUnique);

@@ -14,12 +14,13 @@ public class E11_03 {
         if (input[mid] == x) {
             return mid;
         }
-        if ((input[mid] < x && x <= input[high]) || (input[mid] > input[high] && x > input[mid] || x < input[high])) {
+        if ((input[low] <= x && x < input[mid]) || (input[mid] < input[high] && (x < input[mid] || x > input[high]))) {
+            return searchInRotatedHelper(input, x, low, mid - 1);
+        }
+        if ((input[mid] < x && x <= input[high]) || (input[low] < input[mid] && (x < input[low] || x > input[mid]))) {
             return searchInRotatedHelper(input, x, mid + 1, high);
         }
-        if ((input[0] <= x && x < input[mid]) || (input[0] > input[mid] && x < input[0] || x > input[mid])) {
-            return searchInRotatedHelper(input, x, 0, mid - 1);
-        }
-        return -1;
+        int result = searchInRotatedHelper(input, x, low, mid - 1);
+        return result != -1 ? result : searchInRotatedHelper(input, x, mid + 1, high);
     }
 }

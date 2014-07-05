@@ -1,4 +1,4 @@
-package c09_recursion_and_dynamic_programming;
+package c09_recursion_and_dynamic_programming.e09_10;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,49 +8,17 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class E09_10 {
-
-    public static class Box implements Comparable<Box> {
-        int width, height, depth;
-
-        public Box(int width, int height, int depth) {
-            this.width = width;
-            this.height = height;
-            this.depth = depth;
-        }
-
-        @Override
-        public int compareTo(Box o) {
-            if (width < o.width && height < o.height && depth < o.depth) {
-                return -1;
-            }
-            if (width > o.width && height > o.height && depth > o.depth) {
-                return 1;
-            }
-            return 0;
-        }
-    }
-
-    public static class Solution {
-        List<Box> stack;
-
-        public Solution(List<Box> stack) {
-            this.stack = stack;
-        }
-
-        public int getHeight() {
-            return stack.stream().mapToInt(b -> b.height).sum();
-        }
-    }
-
+public class Solution1 {
     public static Solution buildStack(List<Box> boxes) {
         return buildStackHelper(Collections.emptyList(), boxes)
                 .map(Solution::new)
-                .max(Comparator.comparing(s -> s.getHeight())).get();
+                .max(Comparator.comparing(Solution::getHeight)).get();
     }
 
     static Stream<List<Box>> buildStackHelper(List<Box> partialSolution, List<Box> boxes) {
-        if (boxes.isEmpty()) {
+        if (boxes.isEmpty() ||
+                IntStream.range(0, boxes.size())
+                        .noneMatch(i -> allowed(boxes.get(i), partialSolution))) {
             return Stream.of(partialSolution);
         }
         return IntStream.range(0, boxes.size())
